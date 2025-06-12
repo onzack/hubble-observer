@@ -1145,8 +1145,8 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Cilium Hubble Flows",
-    "uid": "ozk-cilium-hubble-flows",
+    "title": "Cilium Flows - Hubble Observer",
+    "uid": "ozk-cilium-flows-hubble-observer",
     "version": 20,
     "weekStart": ""
   }

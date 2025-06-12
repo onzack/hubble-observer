@@ -1,0 +1,26 @@
+Hubble Observer has been installed!
+
+To verify the installation, you can check the status of the pod:
+
+  kubectl get pods -n {{ .Values.namespace }} -l app.kubernetes.io/name={{ include "hubble-observer.name" . }}
+
+The Hubble Observer is configured to filter flows with verdict: {{ .Values.verdictFilter }}
+
+To view the logs:
+
+  kubectl logs -n {{ .Values.namespace }} -l app.kubernetes.io/name={{ include "hubble-observer.name" . }}
+
+To modify the verdict filter, you can set the verdictFilter value during installation or upgrade by setting `verdictFilter`:
+
+Available verdict options:
+- DROPPED
+- FORWARDED
+- AUDIT
+- REDIRECTED
+- ERROR
+- TRACED
+- TRANSLATED
+- none (to disable filtering) 
+
+ONZACK says thank you for installing the hubble observer.
+For more information about ONZACK, please visit: https://onzack.com 

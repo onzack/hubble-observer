@@ -24,7 +24,7 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/bin/sh", "-c"]
-        args: ["hubble observe --verdict {{ .Values.verdictFilter }} --follow --ip-translation --server $HUBBLE_RELAY_HOST.{{ .Values.hubbleRelay.namespace }}.svc.cluster.local:$HUBBLE_RELAY_PORT -o json > /proc/1/fd/1"]
+        args: ["hubble observe {{- if ne .Values.verdictFilter "none" }} --verdict {{ .Values.verdictFilter }}{{- end }} --follow --ip-translation --server $HUBBLE_RELAY_HOST.{{ .Values.hubbleRelay.namespace }}.svc.cluster.local:$HUBBLE_RELAY_PORT -o json > /proc/1/fd/1"]
         env:
         - name: HUBBLE_RELAY_HOST
           value: {{ .Values.hubbleRelay.serviceName | quote }}

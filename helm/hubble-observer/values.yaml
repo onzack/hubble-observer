@@ -8,7 +8,7 @@ image:
   tag: v1.16.4
   pullPolicy: IfNotPresent
 
-verdictFilter: DROPPED # Available verdicts: DROPPED, FORWARDED, AUDIT, REDIRECTED, ERROR, TRACED, TRANSLATED
+verdictFilter: DROPPED # Available verdicts: DROPPED, FORWARDED, AUDIT, REDIRECTED, ERROR, TRACED, TRANSLATED, none (to disable filtering)
 
 hubbleRelay:
   serviceName: hubble-relay

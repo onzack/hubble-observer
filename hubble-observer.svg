@@ -5,20 +5,11 @@
  width="1536.000000pt" height="1536.000000pt" viewBox="0 0 1536.000000 1536.000000"
  preserveAspectRatio="xMidYMid meet">
 
-<!-- Define radial gradient -->
-<defs>
-  <radialGradient id="fadeGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.97" />
-    <stop offset="50%" style="stop-color:#f8f8f8;stop-opacity:0.4" />
-    <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:0" />
-  </radialGradient>
-</defs>
-
 <!-- Add circular background with gradient -->
 <circle cx="768" cy="768" r="768" fill="url(#fadeGradient)"/>
 
 <g transform="translate(0.000000,1536.000000) scale(0.075000,-0.075000)"
-fill="#000000" stroke="none">
+fill="#FFFFFF" stroke="none">
 <path d="M12670 15058 c-35 -5 -128 -31 -205 -58 -77 -27 -252 -87 -388 -134
 -282 -97 -338 -124 -440 -211 -77 -66 -113 -107 -187 -214 l-45 -65 -150 -67
 c-82 -36 -271 -120 -420 -186 -696 -311 -1971 -875 -2325 -1028 -457 -198

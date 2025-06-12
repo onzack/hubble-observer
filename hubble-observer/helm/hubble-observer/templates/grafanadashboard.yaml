@@ -1,0 +1,16 @@
+{{- if .Values.grafanaDashboard.enabled }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard 
+metadata:
+  name: cilium-hubble-flows
+  labels:
+    app: grafana
+spec:
+  instanceSelector:
+    matchLabels:
+      grafanaInstance: main
+  allowCrossNamespaceImport: true
+  folder: "Cilium"
+  json: |-
+{{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
+{{- end }}

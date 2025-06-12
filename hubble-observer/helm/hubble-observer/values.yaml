@@ -1,0 +1,59 @@
+fullnameOverride: hubble-observer
+
+replicaCount: 1
+namespace: kube-system
+
+image:
+  repository: quay.io/cilium/hubble
+  tag: v1.16.4
+  pullPolicy: IfNotPresent
+
+hubbleRelay:
+  serviceName: hubble-relay
+  port: "80"
+  namespace: kube-system
+
+resources: {}
+#  requests:
+#    cpu: 100m
+#    memory: 128Mi
+#  limits:
+#    cpu: 500m
+#    memory: 256Mi
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+securityContext:
+  runAsNonRoot: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+podSecurityContext: {}
+
+grafanaDashboard:
+  enabled: false
+
+# Additional manifests to be included
+extraManifests: []
+# Example:
+# extraManifests:
+#   - apiVersion: v1
+#     kind: ConfigMap
+#     metadata:
+#       name: my-config
+#     data:
+#       key: value 

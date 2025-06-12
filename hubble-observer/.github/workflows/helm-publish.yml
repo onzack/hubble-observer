@@ -1,0 +1,48 @@
+name: Publish Helm Chart
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm/hubble-observer/**'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  CHART_NAME: hubble-observer
+  CHART_PATH: helm/hubble-observer
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Package and push Helm chart
+        run: |
+          # Package the chart
+          helm package ${{ env.CHART_PATH }}
+          
+          # Get the chart version from Chart.yaml
+          CHART_VERSION=$(grep '^version:' ${{ env.CHART_PATH }}/Chart.yaml | cut -d' ' -f2)
+          
+          # Push to GHCR
+          helm push ${{ env.CHART_NAME }}-$CHART_VERSION.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }} 

@@ -1,0 +1,4 @@
+{{- range .Values.extraManifests }}
+---
+{{- toYaml . | nindent 0 }}
+{{- end }} 

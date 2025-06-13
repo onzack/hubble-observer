@@ -45,4 +45,4 @@ jobs:
           CHART_VERSION=$(grep '^version:' ${{ env.CHART_PATH }}/Chart.yaml | cut -d' ' -f2)
           
           # Push to GHCR
-          helm push ${{ env.CHART_NAME }}-$CHART_VERSION.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }} 
+          helm push ${{ env.CHART_NAME }}-$CHART_VERSION.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/helm-charts

@@ -54,8 +54,6 @@ grafanaDashboard:
   instanceSelector:
     matchLabels:
       grafanaInstance: main
-  datasource:
-    name: "loki"
 
 # Additional manifests to be included
 extraManifests: []

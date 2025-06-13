@@ -16,7 +16,9 @@ spec:
   folder: "{{ .Values.grafanaDashboard.folder }}"
   datasources:
     - inputName: DS_LOKI
-      datasourceName: {{ .Values.grafanaDashboard.datasource.name }}
+      datasourceName: ${datasource}
+    - inputName: VAR_HUBBLEOBSERVERNAMESPACE
+      datasourceName: {{ .Values.namespace }}
   json: |-
 {{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
 {{- end }}

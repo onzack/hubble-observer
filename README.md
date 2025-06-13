@@ -1,4 +1,6 @@
-![Hubble Observer Logo](hubble-observer.svg)
+<div align="center">
+<img src="hubble-observer.svg" alt="Hubble Observer Logo" width="500">
+</div>
 
 # Hubble Observer
 

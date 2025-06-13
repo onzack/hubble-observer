@@ -2,11 +2,8 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="1536.000000pt" height="1536.000000pt" viewBox="0 0 1536.000000 1536.000000"
+ width="500px" height="500px" viewBox="0 0 1536.000000 1536.000000"
  preserveAspectRatio="xMidYMid meet">
-
-<!-- Add circular background with gradient -->
-<circle cx="768" cy="768" r="768" fill="url(#fadeGradient)"/>
 
 <g transform="translate(0.000000,1536.000000) scale(0.075000,-0.075000)"
 fill="#FFFFFF" stroke="none">

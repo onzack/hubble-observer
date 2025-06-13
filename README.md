@@ -1,10 +1,14 @@
 <div align="center">
-<img src="hubble-observer.svg" alt="Hubble Observer Logo" width="500">
+<img src="assets/hubble-observer.svg" alt="Hubble Observer Logo" width="500">
 </div>
 
 # Hubble Observer
 
 The Hubble Observer is a small observability component that monitors network flows within Cilium.
+
+The Hubble Observer includes a Grafana dashboard for visualizing Cilium network flows. Here's a preview of the dashboard:
+
+[![Grafana Dashboard Preview](assets/grafanadashboard.png)](https://test.ch)
 
 ## Prerequisites
 

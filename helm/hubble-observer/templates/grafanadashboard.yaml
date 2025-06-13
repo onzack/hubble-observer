@@ -4,13 +4,19 @@ kind: GrafanaDashboard
 metadata:
   name: cilium-flows-hubble-observer
   labels:
-    app: grafana
+    {{- with .Values.grafanaDashboard.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   instanceSelector:
-    matchLabels:
-      grafanaInstance: main
+    {{- with .Values.grafanaDashboard.instanceSelector }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   allowCrossNamespaceImport: true
-  folder: "Cilium"
+  folder: "{{ .Values.grafanaDashboard.folder }}"
+  datasources:
+    - inputName: DS_LOKI
+      datasourceName: {{ .Values.grafanaDashboard.datasource.name }}
   json: |-
 {{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
 {{- end }}

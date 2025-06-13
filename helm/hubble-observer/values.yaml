@@ -1,6 +1,6 @@
 fullnameOverride: hubble-observer
 
-replicaCount: 1
+replicaCount: 1 # Currently only 1 replica is supported
 namespace: kube-system
 
 image:
@@ -36,18 +36,26 @@ readinessProbe:
   timeoutSeconds: 5
   failureThreshold: 3
 
-securityContext:
-  runAsNonRoot: false
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
+securityContext: {}
+#  runAsNonRoot: false
+#  allowPrivilegeEscalation: false
+#  capabilities:
+#    drop:
+#      - ALL
+#  readOnlyRootFilesystem: true
 
 podSecurityContext: {}
 
 grafanaDashboard:
-  enabled: false
+  enabled: true
+  folder: "Cilium"
+  labels:
+    app: grafana
+  instanceSelector:
+    matchLabels:
+      grafanaInstance: main
+  datasource:
+    name: "loki"
 
 # Additional manifests to be included
 extraManifests: []

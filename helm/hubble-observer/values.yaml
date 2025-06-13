@@ -50,6 +50,10 @@ grafanaDashboard:
   enabled: true
   folder: "Cilium"
   labels:
+    app.kubernetes.io/name: cilium-flows-hubble-observer
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/part-of: hubble-observer
+    app.kubernetes.io/managed-by: Helm
     app: grafana
   instanceSelector:
     matchLabels:

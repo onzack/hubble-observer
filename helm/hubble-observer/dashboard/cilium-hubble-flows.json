@@ -76,7 +76,20 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": null,
-  "links": [],
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "GitHub",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://github.com/onzack/hubble-observer"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -1001,7 +1014,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -1021,7 +1034,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -1109,7 +1122,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": "",
           "value": ""
         },
@@ -1178,6 +1191,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 21,
+  "version": 22,
   "weekStart": ""
 }

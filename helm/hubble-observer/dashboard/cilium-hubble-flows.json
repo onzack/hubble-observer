@@ -71,7 +71,7 @@
       }
     ]
   },
-  "description": "",
+  "description": "Grafana dashboard for Cilium Flows - Hubble Observer",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,

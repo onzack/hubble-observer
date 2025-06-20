@@ -501,7 +501,7 @@
           "mappings": [
             {
               "options": {
-                "AUDITED": {
+                "AUDIT": {
                   "color": "orange",
                   "index": 2
                 },

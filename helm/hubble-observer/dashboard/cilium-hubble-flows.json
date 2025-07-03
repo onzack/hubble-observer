@@ -53,6 +53,12 @@
       "id": "table",
       "name": "Table",
       "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -134,7 +140,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 4,
         "x": 0,
         "y": 1
@@ -214,7 +220,7 @@
         ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 3,
         "x": 4,
         "y": 1
@@ -232,7 +238,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "tooltip": {
           "mode": "single",
@@ -249,8 +255,8 @@
           "editorMode": "code",
           "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "{{flow_destination_name}}",
-          "queryType": "range",
+          "legendFormat": "",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -281,7 +287,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 3,
         "x": 7,
         "y": 1
@@ -299,7 +305,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "tooltip": {
           "mode": "single",
@@ -316,8 +322,8 @@
           "editorMode": "code",
           "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "{{flow_destination_name}}",
-          "queryType": "range",
+          "legendFormat": "",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -348,7 +354,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 5,
         "x": 10,
         "y": 1
@@ -369,7 +375,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "tooltip": {
           "mode": "single",
@@ -386,8 +392,8 @@
           "editorMode": "code",
           "expr": "sum by(flow_source_namespace) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace!=\"\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "{{flow_destination_name}}",
-          "queryType": "range",
+          "legendFormat": "",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -418,7 +424,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "h": 7,
         "w": 9,
         "x": 15,
         "y": 1
@@ -439,7 +445,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": false
+          "values": true
         },
         "tooltip": {
           "mode": "single",
@@ -456,8 +462,8 @@
           "editorMode": "code",
           "expr": "sum by(flow_destination_name) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_IP_ipVersion=~\"$ipversion\" | flow_traffic_direction=~\"$direction\" | json flow_destination_name=\"flow.destination_names[0]\" | flow_destination_name!=\"\" \n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "{{flow_destination_name}}",
-          "queryType": "range",
+          "legendFormat": "",
+          "queryType": "instant",
           "refId": "A"
         }
       ],
@@ -465,12 +471,129 @@
       "type": "piechart"
     },
     {
+      "datasource": {
+        "default": false,
+        "type": "loki",
+        "uid": "${datasource}"
+      },
+      "description": "Flows per Verdict (per $__interval)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": false,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "DROPPED"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 11,
+      "interval": "30s",
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "11.2.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "editorMode": "code",
+          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__auto])\n)",
+          "hide": false,
+          "legendFormat": "{{flow_verdict}}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 12
       },
       "id": 4,
       "panels": [],
@@ -767,7 +890,7 @@
         "h": 15,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 13
       },
       "id": 1,
       "options": {
@@ -793,6 +916,7 @@
           },
           "editorMode": "code",
           "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+          "maxLines": 100,
           "queryType": "range",
           "refId": "A"
         }
@@ -942,7 +1066,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 28
       },
       "id": 2,
       "panels": [
@@ -1184,13 +1308,13 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 22,
+  "version": 23,
   "weekStart": ""
 }

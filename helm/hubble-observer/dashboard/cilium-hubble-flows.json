@@ -1304,7 +1304,11 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "loki",
+          "value": "loki"
+        },
         "hide": 0,
         "includeAll": false,
         "label": "Datasource",

@@ -8,7 +8,7 @@ The Hubble Observer is a small observability component that monitors network flo
 
 The Hubble Observer includes a Grafana dashboard for visualizing Cilium network flows. Here's a preview of the dashboard:
 
-[![Grafana Dashboard Preview](assets/grafanadashboard.png)](https://grafana.com/grafana/dashboards/23555)
+[![Grafana Dashboard Preview](assets/grafanadashboard.png)](https://grafana.com/grafana/dashboards/23636)
 
 ## Prerequisites
 

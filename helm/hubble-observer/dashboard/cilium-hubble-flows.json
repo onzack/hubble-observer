@@ -361,7 +361,7 @@
             {
               "targetBlank": false,
               "title": "",
-              "url": "d/feqsk999uo7wgd?${datasource:queryparam}&${sourcenamespace:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${searchregex:queryparam}&${excluderegex:queryparam}&var-direction=${__data.fields.flow_traffic_direction}"
+              "url": "d/ozk-cilium-flows-hubble-observer?${datasource:queryparam}&${sourcenamespace:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${searchregex:queryparam}&${excluderegex:queryparam}&var-direction=${__data.fields.flow_traffic_direction}"
             }
           ],
           "mappings": []

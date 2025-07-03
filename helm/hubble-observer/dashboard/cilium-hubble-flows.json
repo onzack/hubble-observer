@@ -1059,7 +1059,7 @@
                   {
                     "targetBlank": true,
                     "title": "Open this Flow UUID in a new tab",
-                    "url": "/d/ozk-cilium-flows-hubble-observer?viewPanel=3&var-searchregex=${__data.fields[\"Flow UUID\"]}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&viewPanel=3&var-searchregex=${__data.fields[\"Flow UUID\"]}"
                   }
                 ]
               }

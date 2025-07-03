@@ -25,16 +25,24 @@ resources: {}
 
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 5
+  failureThreshold: 12
+  initialDelaySeconds: 10
   periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 3
+  successThreshold: 1
+  timeoutSeconds: 10
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 5
-  periodSeconds: 10
-  timeoutSeconds: 5
   failureThreshold: 3
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+startupProbe:
+  enabled: true
+  failureThreshold: 20
+  initialDelaySeconds: 10
+  periodSeconds: 3
+  successThreshold: 1
+  timeoutSeconds: 1
 
 securityContext: {}
 #  runAsNonRoot: false

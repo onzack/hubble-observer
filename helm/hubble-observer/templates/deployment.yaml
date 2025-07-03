@@ -45,6 +45,7 @@ spec:
           {{- with .Values.livenessProbe }}
           initialDelaySeconds: {{ .initialDelaySeconds }}
           periodSeconds: {{ .periodSeconds }}
+          successThreshold: {{ .successThreshold }}
           timeoutSeconds: {{ .timeoutSeconds }}
           failureThreshold: {{ .failureThreshold }}
           {{- end }}
@@ -58,8 +59,24 @@ spec:
             - --server
             - "$(HUBBLE_RELAY_HOST):$(HUBBLE_RELAY_PORT)"
           {{- with .Values.readinessProbe }}
+          periodSeconds: {{ .periodSeconds }}
+          successThreshold: {{ .successThreshold }}
+          timeoutSeconds: {{ .timeoutSeconds }}
+          failureThreshold: {{ .failureThreshold }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.startupProbe.enabled }}
+        startupProbe:
+          exec:
+            command:
+            - hubble
+            - status
+            - --server
+            - "$(HUBBLE_RELAY_HOST):$(HUBBLE_RELAY_PORT)"
+          {{- with .Values.startupProbe }}
           initialDelaySeconds: {{ .initialDelaySeconds }}
           periodSeconds: {{ .periodSeconds }}
+          successThreshold: {{ .successThreshold }}
           timeoutSeconds: {{ .timeoutSeconds }}
           failureThreshold: {{ .failureThreshold }}
           {{- end }}

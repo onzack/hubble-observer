@@ -510,7 +510,7 @@
           },
           "links": [
             {
-              "targetBlank": true,
+              "targetBlank": false,
               "title": "",
               "url": "d/ozk-cilium-flows-hubble-observer?${datasource:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${excluderegex:queryparam}&${direction:queryparam}&${sourcenamespace:queryparam}&var-searchregex=${__data.fields.flow_destination_name}"
             }
@@ -1496,6 +1496,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 27,
+  "version": 28,
   "weekStart": ""
 }

@@ -171,7 +171,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum(\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"\n    [$__range])\n)",
+          "expr": "sum(\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A"
@@ -204,14 +204,89 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "DROPPED"
+              "id": "byRegexp",
+              "options": "/AUDIT.*/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/(DROPPED|ERROR)/"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
                   "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/FORWARDED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/REDIRECTED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/TRACED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/TRANSLATED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
                   "mode": "fixed"
                 }
               }
@@ -238,7 +313,7 @@
             "lastNotNull"
           ],
           "fields": "",
-          "values": true
+          "values": false
         },
         "tooltip": {
           "mode": "single",
@@ -253,10 +328,10 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
+          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "",
-          "queryType": "instant",
+          "legendFormat": "{{flow_verdict}}",
+          "queryType": "range",
           "refId": "A"
         }
       ],
@@ -282,6 +357,13 @@
               "viz": false
             }
           },
+          "links": [
+            {
+              "targetBlank": false,
+              "title": "",
+              "url": "d/feqsk999uo7wgd?${datasource:queryparam}&${sourcenamespace:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${searchregex:queryparam}&${excluderegex:queryparam}&var-direction=${__data.fields.flow_traffic_direction}"
+            }
+          ],
           "mappings": []
         },
         "overrides": []
@@ -320,7 +402,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
+          "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -349,6 +431,13 @@
               "viz": false
             }
           },
+          "links": [
+            {
+              "targetBlank": false,
+              "title": "",
+              "url": "d/ozk-cilium-flows-hubble-observer?${datasource:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${searchregex:queryparam}&${excluderegex:queryparam}&${direction:queryparam}&var-sourcenamespace=${__data.fields.flow_source_namespace}"
+            }
+          ],
           "mappings": []
         },
         "overrides": []
@@ -390,7 +479,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_source_namespace) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace!=\"\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__range])\n)",
+          "expr": "sum by(flow_source_namespace) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace!=\"\" | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -419,6 +508,13 @@
               "viz": false
             }
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "",
+              "url": "d/ozk-cilium-flows-hubble-observer?${datasource:queryparam}&${destinationnamespace:queryparam}&${ipversion:queryparam}&${excluderegex:queryparam}&${direction:queryparam}&${sourcenamespace:queryparam}&var-searchregex=${__data.fields.flow_destination_name}"
+            }
+          ],
           "mappings": []
         },
         "overrides": []
@@ -460,7 +556,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_destination_name) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_IP_ipVersion=~\"$ipversion\" | flow_traffic_direction=~\"$direction\" | json flow_destination_name=\"flow.destination_names[0]\" | flow_destination_name!=\"\" \n    [$__range])\n)",
+          "expr": "sum by(flow_destination_name) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\" | flow_destination_name!=\"\" \n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -535,14 +631,89 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "DROPPED"
+              "id": "byRegexp",
+              "options": "/(DROPPED|ERROR)/"
             },
             "properties": [
               {
                 "id": "color",
                 "value": {
                   "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/AUDIT.*/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/FORWARDED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/REDIRECTED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/TRACED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/TRANSLATED/"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
                   "mode": "fixed"
                 }
               }
@@ -578,7 +749,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" \n    [$__auto])\n)",
+          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__auto])\n)",
           "hide": false,
           "legendFormat": "{{flow_verdict}}",
           "queryType": "range",
@@ -881,6 +1052,16 @@
               {
                 "id": "custom.width",
                 "value": 105
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Open this Flow UUID in a new tab",
+                    "url": "/d/ozk-cilium-flows-hubble-observer?viewPanel=3&var-searchregex=${__data.fields[\"Flow UUID\"]}"
+                  }
+                ]
               }
             ]
           }
@@ -1138,7 +1319,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "",
           "value": ""
         },
@@ -1158,7 +1339,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "",
           "value": ""
         },
@@ -1315,6 +1496,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 23,
+  "version": 27,
   "weekStart": ""
 }

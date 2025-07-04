@@ -45,12 +45,15 @@ startupProbe:
   timeoutSeconds: 1
 
 securityContext: {}
-#  runAsNonRoot: false
 #  allowPrivilegeEscalation: false
 #  capabilities:
 #    drop:
 #      - ALL
+#  privileged: false
 #  readOnlyRootFilesystem: true
+#  runAsNonRoot: false
+#  seccompProfile:
+#    type: RuntimeDefault
 
 podSecurityContext: {}
 

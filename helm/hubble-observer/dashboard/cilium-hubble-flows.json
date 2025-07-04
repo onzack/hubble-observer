@@ -1398,9 +1398,8 @@
       {
         "allValue": ".+",
         "current": {
-          "selected": false,
-          "text": "IPv4",
-          "value": "IPv4"
+          "text": "$__all",
+          "value": "$__all"
         },
         "hide": 0,
         "includeAll": true,

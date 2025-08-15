@@ -14,13 +14,6 @@
       "label": "hubbleobservernamespace",
       "value": "kube-system",
       "description": "Namespace of the Hubble Observer pod"
-    },
-    {
-      "name": "VAR_CRI_LOGPARSER",
-      "type": "constant",
-      "label": "cri_logparser",
-      "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
-      "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON."
     }
   ],
   "__elements": {},
@@ -1433,24 +1426,22 @@
         ]
       },
       {
+        "current": {
+          "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+          "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json"
+        },
         "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON.",
         "hide": 2,
         "name": "cri_logparser",
-        "query": "${VAR_CRI_LOGPARSER}",
-        "skipUrlSync": true,
-        "type": "constant",
-        "current": {
-          "value": "${VAR_CRI_LOGPARSER}",
-          "text": "${VAR_CRI_LOGPARSER}",
-          "selected": false
-        },
         "options": [
           {
-            "value": "${VAR_CRI_LOGPARSER}",
-            "text": "${VAR_CRI_LOGPARSER}",
-            "selected": false
+            "selected": true,
+            "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+            "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json"
           }
-        ]
+        ],
+        "query": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+        "type": "textbox"
       }
     ]
   },
@@ -1462,6 +1453,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 31,
+  "version": 32,
   "weekStart": ""
 }

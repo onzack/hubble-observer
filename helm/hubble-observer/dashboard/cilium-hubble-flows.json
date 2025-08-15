@@ -13,14 +13,14 @@
       "type": "constant",
       "label": "hubbleobservernamespace",
       "value": "kube-system",
-      "description": ""
+      "description": "Namespace of the Hubble Observer pod"
     },
     {
       "name": "VAR_CRI_LOGPARSER",
       "type": "constant",
       "label": "cri_logparser",
       "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
-      "description": ""
+      "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON."
     }
   ],
   "__elements": {},
@@ -1461,7 +1461,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
-  "uid": "ozk-cilium-flows-hubble-observer-TEMP",
-  "version": 30,
+  "uid": "ozk-cilium-flows-hubble-observer",
+  "version": 31,
   "weekStart": ""
 }

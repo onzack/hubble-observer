@@ -14,6 +14,13 @@
       "label": "hubbleobservernamespace",
       "value": "kube-system",
       "description": ""
+    },
+    {
+      "name": "VAR_CRI_LOGPARSER",
+      "type": "constant",
+      "label": "cri_logparser",
+      "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+      "description": ""
     }
   ],
   "__elements": {},
@@ -22,7 +29,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.2.3"
+      "version": "12.1.0"
     },
     {
       "type": "panel",
@@ -34,7 +41,7 @@
       "type": "datasource",
       "id": "loki",
       "name": "Loki",
-      "version": "1.0.0"
+      "version": "12.1.0"
     },
     {
       "type": "panel",
@@ -128,7 +135,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -163,7 +170,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -316,11 +323,12 @@
           "values": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -390,17 +398,19 @@
           "values": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
+          "direction": "backward",
           "editorMode": "code",
           "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
@@ -467,11 +477,12 @@
           "values": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -544,11 +555,12 @@
           "values": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -619,7 +631,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -737,11 +749,12 @@
           "showLegend": false
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
@@ -832,7 +845,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               },
               {
                 "color": "red",
@@ -857,7 +870,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Source Pod"
+              "options": "Source"
             },
             "properties": [
               {
@@ -911,18 +924,10 @@
               {
                 "id": "custom.minWidth",
                 "value": 160
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Node"
-            },
-            "properties": [
+              },
               {
-                "id": "custom.minWidth",
-                "value": 150
+                "id": "custom.width",
+                "value": 195
               }
             ]
           },
@@ -944,18 +949,6 @@
                   "type": "color-background",
                   "wrapText": false
                 }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "IP Version"
-            },
-            "properties": [
-              {
-                "id": "custom.minWidth",
-                "value": 100
               }
             ]
           },
@@ -1022,18 +1015,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Destination Pod"
-            },
-            "properties": [
-              {
-                "id": "custom.minWidth",
-                "value": 350
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Destination Namespace"
             },
             "properties": [
@@ -1064,6 +1045,18 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Destination New"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 335
+              }
+            ]
           }
         ]
       },
@@ -1088,15 +1081,16 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.2.3",
+      "pluginVersion": "12.1.0",
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "${DS_LOKI}"
           },
+          "direction": "backward",
           "editorMode": "code",
-          "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+          "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser \n| flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"\n| pattern `<_>,\"source\":{<_>\"labels\":[<sourceLabels>]},\"destination\":{<_>\"labels\":[<destinationLabels>]}` #\"source\":{\"identity\":6,\"labels\":[\"reserved:remote-node\"]},\"destination\"\n| label_format \n    Verdict=`{{.flow_verdict}}`,\n    Source_IP=`{{.flow_IP_source}}`,\n    Source=`{{ if .flow_source_pod_name }}{{.flow_source_pod_name}} (Pod) {{else}} {{.sourceLabels}} (Label) {{end}}`,\n    Source_Namespace=`{{.flow_source_namespace}}`,\n    Direction=`{{.flow_traffic_direction}}`,\n    Dest_Port=`{{ if .flow_l4_TCP_destination_port}}TCP-{{.flow_l4_TCP_destination_port}}{{else if .flow_l4_UDP_destination_port}}UDP-{{.flow_l4_UDP_destination_port}}{{else if .flow_l4_ICMPv4_type}} ICMPv4 {{else}}{{end}}`, #\n    #Destination=`{{.flow_destination_name}}`,\n    Destination=`{{ if .flow_destination_pod_name }}{{.flow_destination_pod_name}} (Pod) {{ else if .flow_destination_name }}{{.flow_destination_name}} (URL){{else}} {{.destinationLabels}} (Label) {{end}}`,\n    #Destination_Pod=`{{.flow_destination_pod_name}}`,\n    Destination_Namespace=`{{.flow_destination_namespace}}`,\n    Destination_IP=`{{.flow_IP_destination}}`, \n    Drop_Description=`{{.flow_drop_reason_desc}}`,\n    Flow_UUID=`{{.flow_uuid}}`",
           "maxLines": 100,
           "queryType": "range",
           "refId": "A"
@@ -1110,6 +1104,21 @@
             "keepTime": true,
             "replace": true,
             "source": "labels"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "^[A-Z].*"
+            }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*)_(.*)",
+            "renamePattern": "$1 $2"
           }
         },
         {
@@ -1154,50 +1163,21 @@
             },
             "includeByName": {},
             "indexByName": {
+              "Dest Port": 6,
+              "Destination": 7,
+              "Destination IP": 9,
+              "Destination Namespace": 8,
+              "Direction": 5,
+              "Drop Description": 10,
+              "Flow UUID": 11,
+              "Source": 3,
+              "Source IP": 2,
+              "Source Namespace": 4,
               "Time": 0,
-              "app": 13,
-              "container": 14,
-              "container_id": 15,
-              "flow_IP_destination": 12,
-              "flow_IP_ipVersion": 27,
-              "flow_IP_source": 2,
-              "flow_Summary": 19,
-              "flow_Type": 16,
-              "flow_destination_cluster_name": 41,
-              "flow_destination_identity": 38,
-              "flow_destination_name": 11,
-              "flow_destination_namespace": 9,
-              "flow_destination_pod_name": 8,
-              "flow_drop_reason": 17,
-              "flow_drop_reason_desc": 18,
-              "flow_ethernet_destination": 20,
-              "flow_ethernet_source": 21,
-              "flow_event_type_sub_type": 22,
-              "flow_event_type_type": 23,
-              "flow_l4_ICMPv6_type": 24,
-              "flow_l4_TCP_destination_port": 10,
-              "flow_l4_TCP_flags_SYN": 39,
-              "flow_l4_TCP_source_port": 4,
-              "flow_node_name": 28,
-              "flow_source_ID": 40,
-              "flow_source_cluster_name": 26,
-              "flow_source_identity": 3,
-              "flow_source_namespace": 6,
-              "flow_source_pod_name": 5,
-              "flow_time": 25,
-              "flow_traffic_direction": 7,
-              "flow_uuid": 29,
-              "flow_verdict": 1,
-              "host": 30,
-              "namespace": 31,
-              "node_name": 32,
-              "pod": 33,
-              "pod_id": 34,
-              "pod_template_hash": 35,
-              "service_name": 36,
-              "time": 37
+              "Verdict": 1
             },
             "renameByName": {
+              "Dest Port": "Dest. Port",
               "flow_IP_destination": "Destination IP",
               "flow_IP_ipVersion": "IP Version",
               "flow_IP_source": "Source IP",
@@ -1229,14 +1209,6 @@
               "host": ""
             }
           }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "include": {
-              "pattern": "^[A-Z].*"
-            }
-          }
         }
       ],
       "type": "table"
@@ -1258,15 +1230,20 @@
             "uid": "${datasource}"
           },
           "description": "",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
           "gridPos": {
             "h": 28,
             "w": 24,
             "x": 0,
-            "y": 26
+            "y": 29
           },
           "id": 3,
           "options": {
             "dedupStrategy": "none",
+            "enableInfiniteScrolling": false,
             "enableLogDetails": true,
             "prettifyLogMessage": true,
             "showCommonLabels": false,
@@ -1275,19 +1252,22 @@
             "sortOrder": "Descending",
             "wrapLogMessage": false
           },
+          "pluginVersion": "12.0.2",
           "targets": [
             {
               "datasource": {
                 "type": "loki",
                 "uid": "${DS_LOKI}"
               },
+              "direction": "backward",
               "editorMode": "code",
-              "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+              "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser \n| flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
               "legendFormat": "",
               "queryType": "range",
               "refId": "A"
             }
           ],
+          "title": "",
           "type": "logs"
         }
       ],
@@ -1295,7 +1275,8 @@
       "type": "row"
     }
   ],
-  "schemaVersion": 39,
+  "refresh": "",
+  "schemaVersion": 41,
   "tags": [
     "cilium",
     "network",
@@ -1304,30 +1285,21 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "loki",
-          "value": "loki"
-        },
-        "hide": 0,
+        "current": {},
         "includeAll": false,
         "label": "Datasource",
-        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "loki",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
-        "hide": 0,
         "label": "Source Namespace",
         "name": "sourcenamespace",
         "options": [
@@ -1338,16 +1310,13 @@
           }
         ],
         "query": "",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
-        "hide": 0,
         "label": "Destination Namespace",
         "name": "destinationnamespace",
         "options": [
@@ -1358,27 +1327,18 @@
           }
         ],
         "query": "",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "allValue": ".+",
         "current": {
-          "selected": false,
-          "text": "All",
+          "text": "$__all",
           "value": "$__all"
         },
-        "hide": 0,
         "includeAll": true,
         "label": "Direction",
-        "multi": false,
         "name": "direction",
         "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
           {
             "selected": false,
             "text": "INGRESS",
@@ -1391,27 +1351,18 @@
           }
         ],
         "query": "INGRESS, EGRESS",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "allValue": ".+",
         "current": {
-          "text": "$__all",
-          "value": "$__all"
+          "text": "IPv4",
+          "value": "IPv4"
         },
-        "hide": 0,
         "includeAll": true,
         "label": "IP Version",
-        "multi": false,
         "name": "ipversion",
         "options": [
-          {
-            "selected": false,
-            "text": "All",
-            "value": "$__all"
-          },
           {
             "selected": true,
             "text": "IPv4",
@@ -1424,18 +1375,14 @@
           }
         ],
         "query": "IPv4, IPv6",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       },
       {
         "current": {
-          "selected": true,
           "text": "",
           "value": ""
         },
         "description": "Regex search (case insensitive)",
-        "hide": 0,
         "label": "Search Regex",
         "name": "searchregex",
         "options": [
@@ -1446,17 +1393,14 @@
           }
         ],
         "query": "",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "current": {
-          "selected": false,
           "text": "a^",
           "value": "a^"
         },
         "description": "Regex exclude (case insensitive)",
-        "hide": 0,
         "label": "Exclude Regex",
         "name": "excluderegex",
         "options": [
@@ -1467,14 +1411,13 @@
           }
         ],
         "query": "a^",
-        "skipUrlSync": false,
         "type": "textbox"
       },
       {
         "hide": 2,
         "name": "hubbleobservernamespace",
         "query": "${VAR_HUBBLEOBSERVERNAMESPACE}",
-        "skipUrlSync": false,
+        "skipUrlSync": true,
         "type": "constant",
         "current": {
           "value": "${VAR_HUBBLEOBSERVERNAMESPACE}",
@@ -1490,21 +1433,21 @@
         ]
       },
       {
+        "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON.",
         "hide": 2,
         "name": "cri_logparser",
-        "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON.",
-        "query": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
-        "skipUrlSync": false,
+        "query": "${VAR_CRI_LOGPARSER}",
+        "skipUrlSync": true,
         "type": "constant",
         "current": {
-          "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
-          "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+          "value": "${VAR_CRI_LOGPARSER}",
+          "text": "${VAR_CRI_LOGPARSER}",
           "selected": false
         },
         "options": [
           {
-            "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
-            "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+            "value": "${VAR_CRI_LOGPARSER}",
+            "text": "${VAR_CRI_LOGPARSER}",
             "selected": false
           }
         ]
@@ -1518,7 +1461,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
-  "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 29,
+  "uid": "ozk-cilium-flows-hubble-observer-TEMP",
+  "version": 30,
   "weekStart": ""
 }

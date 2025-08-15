@@ -171,7 +171,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum(\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
+          "expr": "sum(\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "legendFormat": "",
           "queryType": "instant",
           "refId": "A"
@@ -328,7 +328,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
+          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "{{flow_verdict}}",
           "queryType": "range",
@@ -402,7 +402,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
+          "expr": "sum by(flow_traffic_direction) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -479,7 +479,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_source_namespace) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace!=\"\" | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
+          "expr": "sum by(flow_source_namespace) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace!=\"\" | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -556,7 +556,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_destination_name) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\" | flow_destination_name!=\"\" \n    [$__range])\n)",
+          "expr": "sum by(flow_destination_name) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\" | flow_destination_name!=\"\" \n    [$__range])\n)",
           "hide": false,
           "legendFormat": "",
           "queryType": "instant",
@@ -749,7 +749,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__auto])\n)",
+          "expr": "sum by(flow_verdict) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\"\n    [$__auto])\n)",
           "hide": false,
           "legendFormat": "{{flow_verdict}}",
           "queryType": "range",
@@ -1096,7 +1096,7 @@
             "uid": "${DS_LOKI}"
           },
           "editorMode": "code",
-          "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| json | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+          "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
           "maxLines": 100,
           "queryType": "range",
           "refId": "A"
@@ -1282,7 +1282,7 @@
                 "uid": "${DS_LOKI}"
               },
               "editorMode": "code",
-              "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| json | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+              "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $cri_logparser | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
               "legendFormat": "",
               "queryType": "range",
               "refId": "A"
@@ -1488,6 +1488,26 @@
             "selected": false
           }
         ]
+      },
+      {
+        "hide": 2,
+        "name": "cri_logparser",
+        "description": "Parses CRI log lines, extracting timestamp, stream, flags, and message. Only the message part is taken if it matches, then it is parsed as JSON.",
+        "query": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+          "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+            "text": "regexp `^(?:(?P<timestamp>\\S+) (?P<stream>\\S+) (?P<flags>\\S+) )?(?P<message>.*)$` | line_format `{{.message}}` | json",
+            "selected": false
+          }
+        ]
       }
     ]
   },
@@ -1499,6 +1519,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 28,
+  "version": 29,
   "weekStart": ""
 }

@@ -2,7 +2,7 @@ apiVersion: v2
 name: hubble-observer
 description: A Helm chart for Hubble Observer - A small observability component that monitors network flows within Cilium.
 type: application
-version: 1.2.3
+version: 1.2.4
 appVersion: "1.16.4"
 keywords:
   - networking
@@ -16,4 +16,4 @@ sources:
   - https://github.com/onzack/hubble-observer
 maintainers:
   - name: ONZACK
-    url: https://onzack.com 
+    url: https://onzack.com

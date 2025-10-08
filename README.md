@@ -1,5 +1,5 @@
 <div align="center">
-<img src="assets/hubble-observer.svg" alt="Hubble Observer Logo" width="500">
+<img src="assets/hubble-observer_background.png" alt="Hubble Observer Logo" width="500">
 </div>
 
 # Hubble Observer

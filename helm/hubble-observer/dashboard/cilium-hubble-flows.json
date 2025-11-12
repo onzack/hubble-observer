@@ -1219,52 +1219,58 @@
         "x": 0,
         "y": 28
       },
-      "id": 2,
-      "panels": [],
-      "title": "Raw Flows",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "default": false,
-        "type": "loki",
-        "uid": "${datasource}"
-      },
-      "description": "",
-      "gridPos": {
-        "h": 28,
-        "w": 24,
-        "x": 0,
-        "y": 29
-      },
-      "id": 3,
-      "options": {
-        "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
-        "enableLogDetails": true,
-        "prettifyLogMessage": true,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": true,
-        "sortOrder": "Descending",
-        "wrapLogMessage": false
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
+      "id": 12,
+      "panels": [
         {
           "datasource": {
+            "default": false,
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
-          "direction": "backward",
-          "editorMode": "code",
-          "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $logparser \n| flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
-          "legendFormat": "",
-          "queryType": "range",
-          "refId": "A"
+          "description": "",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 28,
+            "w": 24,
+            "x": 0,
+            "y": 29
+          },
+          "id": 3,
+          "options": {
+            "dedupStrategy": "none",
+            "enableInfiniteScrolling": false,
+            "enableLogDetails": true,
+            "prettifyLogMessage": true,
+            "showCommonLabels": false,
+            "showLabels": false,
+            "showTime": true,
+            "sortOrder": "Descending",
+            "wrapLogMessage": false
+          },
+          "pluginVersion": "12.1.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${DS_LOKI}"
+              },
+              "direction": "backward",
+              "editorMode": "code",
+              "expr": "{namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n| $logparser \n| flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | json flow_destination_name=\"flow.destination_names[0]\"",
+              "legendFormat": "",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "",
+          "type": "logs"
         }
       ],
-      "type": "logs"
+      "title": "Raw Flows",
+      "type": "row"
     }
   ],
   "refresh": "",
@@ -1452,6 +1458,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 33,
+  "version": 34,
   "weekStart": ""
 }

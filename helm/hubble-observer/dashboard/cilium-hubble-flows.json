@@ -1037,7 +1037,7 @@
                   {
                     "targetBlank": true,
                     "title": "Open this Flow UUID in a new tab",
-                    "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&viewPanel=3&var-searchregex=${__data.fields[\"Flow UUID\"]}"
+                    "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&viewPanel=3&var-ipversion=$__all&var-searchregex=${__data.fields[\"Flow UUID\"]}"
                   }
                 ]
               }
@@ -1689,7 +1689,7 @@
             "h": 28,
             "w": 24,
             "x": 0,
-            "y": 104
+            "y": 119
           },
           "id": 3,
           "options": {
@@ -1807,20 +1807,20 @@
       {
         "allValue": ".+",
         "current": {
-          "text": "IPv4",
-          "value": "IPv4"
+          "text": "IPv6",
+          "value": "IPv6"
         },
         "includeAll": true,
         "label": "IP Version",
         "name": "ipversion",
         "options": [
           {
-            "selected": true,
+            "selected": false,
             "text": "IPv4",
             "value": "IPv4"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "IPv6",
             "value": "IPv6"
           }
@@ -1911,6 +1911,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 41,
+  "version": 42,
   "weekStart": ""
 }

@@ -1815,12 +1815,12 @@
         "name": "ipversion",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "IPv4",
             "value": "IPv4"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "IPv6",
             "value": "IPv6"
           }
@@ -1911,6 +1911,6 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 42,
+  "version": 43,
   "weekStart": ""
 }

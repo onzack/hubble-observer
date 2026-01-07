@@ -20,7 +20,7 @@ spec:
     - inputName: DS_LOKI
       datasourceName: ${datasource}
     - inputName: VAR_HUBBLEOBSERVERNAMESPACE
-      datasourceName: {{ .Values.namespace }}
+      datasourceName: {{ .Release.Namespace }}
   json: |-
 {{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
 {{- end }}

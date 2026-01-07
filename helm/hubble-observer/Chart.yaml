@@ -20,5 +20,5 @@ maintainers:
 dependencies:
   - name: cf2cnp
     version: "*"
-    repository: https://onzack.github.io/cf2cnp
+    repository: oci://ghcr.io/onzack/helm-charts
     condition: cf2cnp.enabled

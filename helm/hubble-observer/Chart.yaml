@@ -2,7 +2,7 @@ apiVersion: v2
 name: hubble-observer
 description: A Helm chart for Hubble Observer - A small observability component that monitors network flows within Cilium.
 type: application
-version: 1.3.1
+version: 2.0.0
 appVersion: "1.16.4"
 keywords:
   - networking
@@ -17,3 +17,8 @@ sources:
 maintainers:
   - name: ONZACK
     url: https://onzack.com
+dependencies:
+  - name: cf2cnp
+    version: "*"
+    repository: https://onzack.github.io/cf2cnp
+    condition: cf2cnp.enabled

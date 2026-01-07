@@ -79,4 +79,13 @@ extraManifests: []
 #     metadata:
 #       name: my-config
 #     data:
-#       key: value 
+#       key: value
+
+# cf2cnp (Cilium Flow to CiliumNetworkPolicy) dependency configuration
+# Additional cf2cnp values can be configured here
+# See https://github.com/onzack/cf2cnp/tree/main/helm/cf2cnp for available values 
+cf2cnp:
+  enabled: false
+  fullnameOverride: hubble-observer-cf2cnp
+  extraManifests: []
+  resources: {}

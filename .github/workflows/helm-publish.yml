@@ -36,6 +36,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update Helm dependencies
+        run: |
+          helm dependency update ${{ env.CHART_PATH }}
+
       - name: Package and push Helm chart
         run: |
           # Package the chart

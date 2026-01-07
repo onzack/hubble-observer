@@ -14,6 +14,13 @@
       "label": "hubbleobservernamespace",
       "value": "kube-system",
       "description": ""
+    },
+    {
+      "name": "VAR_HUBBLEOBSERVERCF2CNPURL",
+      "type": "constant",
+      "label": "hubbleobservercf2cnpurl",
+      "value": "https://cf2cnp.local",
+      "description": ""
     }
   ],
   "__elements": {},
@@ -22,7 +29,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "12.1.1"
+      "version": "12.3.1"
     },
     {
       "type": "panel",
@@ -34,7 +41,7 @@
       "type": "datasource",
       "id": "loki",
       "name": "Loki",
-      "version": "12.1.1"
+      "version": "12.3.1"
     },
     {
       "type": "panel",
@@ -81,7 +88,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
   "links": [
     {
       "asDropdown": false,
@@ -163,12 +169,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -323,12 +329,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -400,12 +406,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -480,12 +486,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -560,12 +566,12 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -617,6 +623,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": false,
             "stacking": {
               "group": "A",
@@ -755,12 +762,12 @@
           "sort": "desc"
         }
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -803,6 +810,9 @@
               "type": "auto"
             },
             "filterable": true,
+            "footer": {
+              "reducers": []
+            },
             "inspect": false,
             "minWidth": 50
           },
@@ -979,18 +989,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Summary"
-            },
-            "properties": [
-              {
-                "id": "custom.minWidth",
-                "value": 200
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Drop Description"
             },
             "properties": [
@@ -1041,6 +1039,35 @@
                     "targetBlank": true,
                     "title": "Open this Flow UUID in a new tab",
                     "url": "/d/${__dashboard.uid}/${__dashboard}?${__url_time_range}&viewPanel=3&var-ipversion=$__all&var-searchregex=${__data.fields[\"Flow UUID\"]}"
+                  },
+                  {
+                    "targetBlank": true,
+                    "title": "Download CiliumNetworkPolicy (first click \"Generate..\")",
+                    "url": "${hubbleobservercf2cnpurl}/download/${__data.fields[\"Flow UUID\"]}"
+                  }
+                ]
+              },
+              {
+                "id": "actions",
+                "value": [
+                  {
+                    "fetch": {
+                      "body": "${__data.fields.Line}",
+                      "headers": [
+                        [
+                          "Content-Type",
+                          "application/json"
+                        ]
+                      ],
+                      "method": "POST",
+                      "queryParams": [],
+                      "url": "${hubbleobservercf2cnpurl}/generate"
+                    },
+                    "style": {
+                      "backgroundColor": "#5794F2"
+                    },
+                    "title": "Generate CiliumNetworkPolicy from Flow",
+                    "type": "fetch"
                   }
                 ]
               }
@@ -1049,12 +1076,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Destination New"
+              "options": "Line"
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 335
+                "id": "custom.hideFrom.viz",
+                "value": true
               }
             ]
           }
@@ -1070,14 +1097,6 @@
       "options": {
         "cellHeight": "sm",
         "enablePagination": true,
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
         "showHeader": true,
         "sortBy": [
           {
@@ -1086,12 +1105,12 @@
           }
         ]
       },
-      "pluginVersion": "12.1.1",
+      "pluginVersion": "12.3.1",
       "targets": [
         {
           "datasource": {
             "type": "loki",
-            "uid": "${DS_LOKI}"
+            "uid": "${datasource}"
           },
           "direction": "backward",
           "editorMode": "code",
@@ -1106,8 +1125,9 @@
         {
           "id": "extractFields",
           "options": {
-            "keepTime": true,
-            "replace": true,
+            "delimiter": ",",
+            "keepTime": false,
+            "replace": false,
             "source": "labels"
           }
         },
@@ -1144,6 +1164,7 @@
           "id": "organize",
           "options": {
             "excludeByName": {
+              "Line": false,
               "app": true,
               "container": true,
               "container_id": true,
@@ -1197,6 +1218,7 @@
             },
             "renameByName": {
               "Dest Port": "Dest. Port",
+              "Line": "",
               "flow_IP_destination": "Destination IP",
               "flow_IP_ipVersion": "IP Version",
               "flow_IP_source": "Source IP",
@@ -1480,7 +1502,7 @@
             {
               "datasource": {
                 "type": "loki",
-                "uid": "${DS_LOKI}"
+                "uid": "${datasource}"
               },
               "direction": "backward",
               "editorMode": "code",
@@ -1717,7 +1739,7 @@
             {
               "datasource": {
                 "type": "loki",
-                "uid": "${DS_LOKI}"
+                "uid": "${datasource}"
               },
               "direction": "backward",
               "editorMode": "code",
@@ -1735,8 +1757,9 @@
       "type": "row"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 41,
+  "schemaVersion": 42,
   "tags": [
     "cilium",
     "network",
@@ -1745,7 +1768,11 @@
   "templating": {
     "list": [
       {
-        "current": {},
+        "current": {
+          "text": "",
+          "value": "${DS_LOKI}",
+          "selected": true
+        },
         "includeAll": false,
         "label": "Datasource",
         "name": "datasource",
@@ -1909,6 +1936,26 @@
         ],
         "query": "regexp `(?P<message>.+)` | line_format `{{.message}}` | json",
         "type": "textbox"
+      },
+      {
+        "description": "The URL of CF2CNP to generate CiliumNetworkPolicies from Cilium Flows.",
+        "hide": 2,
+        "name": "hubbleobservercf2cnpurl",
+        "query": "${VAR_HUBBLEOBSERVERCF2CNPURL}",
+        "skipUrlSync": true,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_HUBBLEOBSERVERCF2CNPURL}",
+          "text": "${VAR_HUBBLEOBSERVERCF2CNPURL}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_HUBBLEOBSERVERCF2CNPURL}",
+            "text": "${VAR_HUBBLEOBSERVERCF2CNPURL}",
+            "selected": false
+          }
+        ]
       }
     ]
   },
@@ -1920,6 +1967,7 @@
   "timezone": "browser",
   "title": "Cilium Flows - Hubble Observer",
   "uid": "ozk-cilium-flows-hubble-observer",
-  "version": 44,
-  "weekStart": ""
+  "version": 50,
+  "weekStart": "",
+  "id": null
 }

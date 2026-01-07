@@ -1,7 +1,6 @@
 fullnameOverride: hubble-observer
 
 replicaCount: 1 # Currently only 1 replica is supported
-namespace: kube-system
 
 image:
   repository: quay.io/cilium/hubble

@@ -21,6 +21,8 @@ spec:
       datasourceName: ${datasource}
     - inputName: VAR_HUBBLEOBSERVERNAMESPACE
       datasourceName: {{ .Release.Namespace }}
+    - inputName: VAR_HUBBLEOBSERVERCF2CNPURL
+      datasourceName: {{ (index .Values.cf2cnp.ingress.hosts 0).host }}
   json: |-
 {{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
 {{- end }}

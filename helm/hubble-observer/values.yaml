@@ -87,5 +87,21 @@ extraManifests: []
 cf2cnp:
   enabled: false
   fullnameOverride: hubble-observer-cf2cnp
-  extraManifests: []
+  
   resources: {}
+
+  ingress:
+    enabled: false
+    className: ""
+    annotations: {}
+    hosts:
+      - host: cf2cnp.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+    #  - secretName: cf2cnp-tls
+    #    hosts:
+    #      - cf2cnp.local
+
+  extraManifests: []

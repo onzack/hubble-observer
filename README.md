@@ -5,8 +5,9 @@
 # Hubble Observer
 
 The Hubble Observer is a small observability component that monitors network flows within Cilium.
+> **Note:** You can enable the **CF2CNP** feature in the Helm chart (`cf2cnp.enabled=true`) to automatically generate CiliumNetworkPolicies based on observed network flows. **These policies are not applied automatically; you need to download them and apply them yourself.** See the `values.yaml` file for additional `cf2cnp` configuration options.
 
-The Hubble Observer includes a Grafana dashboard for visualizing Cilium network flows. Here's a preview of the dashboard:
+The Hubble Observer also includes a Grafana dashboard for visualizing Cilium network flows. Here's a preview of the dashboard:
 
 [![Grafana Dashboard Preview](assets/grafanadashboard.png)](https://grafana.com/grafana/dashboards/23862)
 

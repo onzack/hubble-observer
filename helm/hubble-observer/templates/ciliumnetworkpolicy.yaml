@@ -1,0 +1,71 @@
+{{- if .Values.ciliumNetworkPolicy.enabled }}
+---
+# CiliumNetworkPolicy: Allow hubble-observer egress to hubble-relay
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-{{ include "hubble-observer.fullname" . }}-to-hubble-relay
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "hubble-observer.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "hubble-observer.selectorLabels" . | nindent 6 }}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: hubble-relay
+            {{- if .Values.hubbleRelay.namespace }}
+            io.kubernetes.pod.namespace: {{ .Values.hubbleRelay.namespace }}
+            {{- end }}
+      toPorts:
+        - ports:
+            - port: {{ .Values.hubbleRelay.port | quote }}
+              protocol: TCP
+{{- if .Values.cf2cnp.enabled }}
+---
+# CiliumNetworkPolicy: Allow hubble-observer egress to cf2cnp
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-{{ include "hubble-observer.fullname" . }}-to-cf2cnp
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "hubble-observer.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "hubble-observer.selectorLabels" . | nindent 6 }}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: cf2cnp
+            app.kubernetes.io/instance: {{ .Release.Name }}
+      toPorts:
+        - ports:
+            - port: {{ .Values.ciliumNetworkPolicy.cf2cnp.port | quote }}
+              protocol: TCP
+---
+# CiliumNetworkPolicy: Allow ingress traffic to cf2cnp
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-{{ .Values.cf2cnp.fullnameOverride | default "cf2cnp" }}-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "hubble-observer.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cf2cnp
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  ingress:
+    - fromEntities:
+        {{- toYaml .Values.ciliumNetworkPolicy.cf2cnp.ingressFromEntities | nindent 8 }}
+      toPorts:
+        - ports:
+            - port: {{ .Values.ciliumNetworkPolicy.cf2cnp.port | quote }}
+              protocol: TCP
+{{- end }}
+{{- end }}

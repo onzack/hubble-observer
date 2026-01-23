@@ -69,6 +69,17 @@ grafanaDashboard:
     matchLabels:
       grafanaInstance: main
 
+# CiliumNetworkPolicy configuration
+ciliumNetworkPolicy:
+  enabled: false
+  cf2cnp:
+    # Port for cf2cnp service
+    port: "8080"
+    # Entities allowed to access cf2cnp via ingress
+    ingressFromEntities:
+      - cluster
+      - world
+
 # Additional manifests to be included
 extraManifests: []
 # Example:

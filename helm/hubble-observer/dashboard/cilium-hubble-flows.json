@@ -1729,12 +1729,14 @@
             "enableLogDetails": true,
             "prettifyLogMessage": true,
             "showCommonLabels": false,
+            "showControls": false,
             "showLabels": false,
             "showTime": true,
             "sortOrder": "Descending",
+            "syntaxHighlighting": true,
             "wrapLogMessage": false
           },
-          "pluginVersion": "12.1.1",
+          "pluginVersion": "12.3.1",
           "targets": [
             {
               "datasource": {

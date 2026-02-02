@@ -1734,7 +1734,7 @@
             "showTime": true,
             "sortOrder": "Descending",
             "syntaxHighlighting": true,
-            "wrapLogMessage": false
+            "wrapLogMessage": true
           },
           "pluginVersion": "12.3.1",
           "targets": [

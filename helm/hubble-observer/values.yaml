@@ -8,6 +8,7 @@ image:
   pullPolicy: IfNotPresent
 
 verdictFilter: DROPPED # Available verdicts: DROPPED, FORWARDED, AUDIT, REDIRECTED, ERROR, TRACED, TRANSLATED, none (to disable filtering)
+excludeUnsupportedL3Protocols: true # Exclude unsupported L3 protocols from the output (Drop reason: UNSUPPORTED_L3_PROTOCOL)
 
 hubbleRelay:
   serviceName: hubble-relay

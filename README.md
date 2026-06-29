@@ -32,7 +32,7 @@ Before installing the Hubble Observer, ensure you have the following components 
 ## Installation
 
 ```bash
-helm upgrade --install hubble-observer oci://ghcr.io/onzack/hubble-observer:<VERSION>
+helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-observer --version <VERSION>
 ```
 
 ## Configuration

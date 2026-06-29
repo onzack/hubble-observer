@@ -14,6 +14,7 @@ hubbleRelay:
   serviceName: hubble-relay
   port: "80"
   namespace: kube-system
+  clusterDomain: cluster.local
 
 resources: {}
 #  requests:

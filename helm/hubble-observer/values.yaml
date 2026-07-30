@@ -116,4 +116,17 @@ cf2cnp:
     #    hosts:
     #      - cf2cnp.local
 
+  httpRoute:
+    enabled: false
+    annotations: {}
+    parentRefs: []
+    #  - name: my-gateway
+    #    namespace: gateway-system
+    #    sectionName: https
+    hostnames:
+      - cf2cnp.local
+    paths:
+      - path: /
+        pathType: PathPrefix
+
   extraManifests: []

@@ -37,4 +37,6 @@ helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-o
 
 ## Configuration
 
-See `values.yaml` for configuration options. 
+See `values.yaml` for configuration options.
+
+CF2CNP can be exposed via `cf2cnp.ingress` or, with the Gateway API, via `cf2cnp.httpRoute`. The URL the Grafana dashboard uses is taken from the first ingress host or httpRoute hostname.

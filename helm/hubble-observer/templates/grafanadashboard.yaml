@@ -22,7 +22,11 @@ spec:
     - inputName: VAR_HUBBLEOBSERVERNAMESPACE
       datasourceName: {{ .Release.Namespace }}
     - inputName: VAR_HUBBLEOBSERVERCF2CNPURL
+      {{- if .Values.cf2cnp.httpRoute.enabled }}
+      datasourceName: https://{{ index .Values.cf2cnp.httpRoute.hostnames 0 }}
+      {{- else }}
       datasourceName: https://{{ (index .Values.cf2cnp.ingress.hosts 0).host }}
+      {{- end }}
   json: |-
 {{ .Files.Get "dashboard/cilium-hubble-flows.json" | indent 4 }}
 {{- end }}

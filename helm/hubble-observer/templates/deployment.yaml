@@ -1,3 +1,8 @@
+{{- include "hubble-observer.validateTls" . }}
+{{- $tls := .Values.hubbleRelay.tls | default dict }}
+{{- $ca := $tls.ca | default dict }}
+{{- $client := $tls.client | default dict }}
+{{- $relayAddress := include "hubble-observer.relayAddress" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +17,10 @@ spec:
       {{- include "hubble-observer.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- if $tls.enabled }}
+      annotations:
+        checksum/relay-tls-config: {{ toYaml $tls | sha256sum }}
+      {{- end }}
       labels:
         {{- include "hubble-observer.selectorLabels" . | nindent 8 }}
     spec:
@@ -24,12 +33,15 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/bin/sh", "-c"]
-        args: ["hubble observe flows {{- if ne .Values.verdictFilter "none" }} --verdict {{ .Values.verdictFilter }}{{- end }} {{- if .Values.excludeUnsupportedL3Protocols }} --not --drop-reason-desc 'UNSUPPORTED_L3_PROTOCOL' {{- end }} --follow --ip-translation --server $HUBBLE_RELAY_HOST.{{ .Values.hubbleRelay.namespace }}.svc.{{ .Values.hubbleRelay.clusterDomain }}:$HUBBLE_RELAY_PORT -o json > /proc/1/fd/1"]
+        args: ["hubble observe flows {{- if ne .Values.verdictFilter "none" }} --verdict {{ .Values.verdictFilter }}{{- end }} {{- if .Values.excludeUnsupportedL3Protocols }} --not --drop-reason-desc 'UNSUPPORTED_L3_PROTOCOL' {{- end }} --follow --ip-translation --server {{ $relayAddress }} -o json > /proc/1/fd/1"]
         env:
         - name: HUBBLE_RELAY_HOST
           value: {{ .Values.hubbleRelay.serviceName | quote }}
         - name: HUBBLE_RELAY_PORT
-          value: {{ .Values.hubbleRelay.port | quote }}
+          value: {{ include "hubble-observer.relayPort" . | quote }}
+        {{- with include "hubble-observer.relayTlsEnv" . }}
+        {{- . | nindent 8 }}
+        {{- end }}
         {{- with .Values.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -41,7 +53,7 @@ spec:
             - hubble
             - status
             - --server
-            - "$(HUBBLE_RELAY_HOST):$(HUBBLE_RELAY_PORT)"
+            - {{ $relayAddress | quote }}
           {{- with .Values.livenessProbe }}
           initialDelaySeconds: {{ .initialDelaySeconds }}
           periodSeconds: {{ .periodSeconds }}
@@ -57,7 +69,7 @@ spec:
             - hubble
             - status
             - --server
-            - "$(HUBBLE_RELAY_HOST):$(HUBBLE_RELAY_PORT)"
+            - {{ $relayAddress | quote }}
           {{- with .Values.readinessProbe }}
           periodSeconds: {{ .periodSeconds }}
           successThreshold: {{ .successThreshold }}
@@ -72,7 +84,7 @@ spec:
             - hubble
             - status
             - --server
-            - "$(HUBBLE_RELAY_HOST):$(HUBBLE_RELAY_PORT)"
+            - {{ $relayAddress | quote }}
           {{- with .Values.startupProbe }}
           initialDelaySeconds: {{ .initialDelaySeconds }}
           periodSeconds: {{ .periodSeconds }}
@@ -88,7 +100,48 @@ spec:
         volumeMounts:
         - name: tmp
           mountPath: /tmp
+        {{- if include "hubble-observer.relayTlsMounted" . }}
+        - name: relay-certs
+          mountPath: {{ include "hubble-observer.relayTlsMountPath" . | quote }}
+          readOnly: true
+        {{- end }}
       volumes:
       - name: tmp
         emptyDir:
           sizeLimit: 50Mi
+      {{- if include "hubble-observer.relayTlsMounted" . }}
+      - name: relay-certs
+        projected:
+          # the leading zero means this number is in octal representation: do not remove it
+          defaultMode: 0400
+          sources:
+          {{- $sharedSecret := and $ca.secretName $client.enabled (eq (toString $ca.secretName) (toString $client.secretName)) }}
+          {{- if $ca.secretName }}
+          - secret:
+              name: {{ $ca.secretName | quote }}
+              items:
+              - key: {{ $ca.key | default "ca.crt" }}
+                path: ca.crt
+              {{- if $sharedSecret }}
+              - key: {{ $client.certKey | default "tls.crt" }}
+                path: client.crt
+              - key: {{ $client.keyKey | default "tls.key" }}
+                path: client.key
+              {{- end }}
+          {{- else if $ca.configMapName }}
+          - configMap:
+              name: {{ $ca.configMapName | quote }}
+              items:
+              - key: {{ $ca.key | default "ca.crt" }}
+                path: ca.crt
+          {{- end }}
+          {{- if and $client.enabled (not $sharedSecret) }}
+          - secret:
+              name: {{ $client.secretName | quote }}
+              items:
+              - key: {{ $client.certKey | default "tls.crt" }}
+                path: client.crt
+              - key: {{ $client.keyKey | default "tls.key" }}
+                path: client.key
+          {{- end }}
+      {{- end }}

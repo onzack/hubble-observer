@@ -21,7 +21,7 @@ spec:
             {{- end }}
       toPorts:
         - ports:
-            - port: {{ .Values.hubbleRelay.port | quote }}
+            - port: {{ include "hubble-observer.relayPort" . | quote }}
               protocol: TCP
 {{- if .Values.cf2cnp.enabled }}
 ---

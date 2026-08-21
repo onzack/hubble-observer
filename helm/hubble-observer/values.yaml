@@ -12,9 +12,36 @@ excludeUnsupportedL3Protocols: true # Exclude unsupported L3 protocols from the 
 
 hubbleRelay:
   serviceName: hubble-relay
-  port: "80"
+  port: "" # Defaults to 443 when tls.enabled is true, otherwise 80
   namespace: kube-system
   clusterDomain: cluster.local
+  # TLS/mTLS configuration for the connection to Hubble Relay.
+  # Requires TLS to be enabled on the relay server in Cilium
+  # (hubble.relay.tls.server.enabled=true).
+  # The referenced secrets and ConfigMaps must exist in the namespace the
+  # hubble-observer is installed into. See the README for details.
+  tls:
+    enabled: false
+    # Server name verified against the relay server certificate.
+    # Cilium issues that certificate for *.hubble-relay.cilium.io.
+    serverName: hubble.hubble-relay.cilium.io
+    # Skip verification of the relay server certificate. Not recommended.
+    insecureSkipVerify: false
+    mountPath: /var/lib/hubble-observer/tls
+    # CA that signed the relay server certificate. Provide it either via a
+    # secret or a ConfigMap, not both.
+    ca:
+      secretName: ""
+      configMapName: ""
+      key: ca.crt
+    # Client certificate presented to Hubble Relay. Required when the relay
+    # enforces mTLS (hubble.relay.tls.server.mtls=true).
+    # secretName may point to the same secret as ca.secretName.
+    client:
+      enabled: false
+      secretName: ""
+      certKey: tls.crt
+      keyKey: tls.key
 
 resources: {}
 #  requests:

@@ -43,7 +43,7 @@ CF2CNP can be exposed via `cf2cnp.ingress` or, with the Gateway API, via `cf2cnp
 
 ## TLS and mTLS to Hubble Relay
 
-If TLS is enabled on the Hubble Relay server (`hubble.relay.tls.server.enabled=true` in Cilium), the Hubble Observer has to connect over TLS as well. When the relay additionally enforces mutual TLS (`hubble.relay.tls.server.mtls=true`), a client certificate signed by the Cilium CA is required.
+If TLS is enabled on the Hubble Relay server (`hubble.relay.tls.server.enabled=true` in Cilium Helm chart), the Hubble Observer has to connect over TLS as well. When the relay additionally enforces mutual TLS (`hubble.relay.tls.server.mtls=true`), a client certificate signed by the Cilium CA is required.
 
 Cilium creates its Hubble certificates in the namespace it is installed into (usually `kube-system`). Helm can only mount secrets from the namespace of the release, so the certificates have to be available in the namespace the Hubble Observer is installed into.
 

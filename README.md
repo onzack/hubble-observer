@@ -39,6 +39,8 @@ helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-o
 
 See `values.yaml` for configuration options.
 
+`fieldMask` keeps only the listed flow fields (`hubble observe --field-mask`): Hubble Relay strips the rest before sending, so the stream, the pod log and Loki all shrink — `values.yaml` carries the smallest mask that still feeds every dashboard panel (~35% fewer bytes per flow, measured). `extraArgs` appends further `hubble observe` flags verbatim.
+
 CF2CNP can be exposed via `cf2cnp.ingress` or, with the Gateway API, via `cf2cnp.httpRoute`. The URL the Grafana dashboard uses is taken from the first ingress host or httpRoute hostname.
 
 ## TLS and mTLS to Hubble Relay

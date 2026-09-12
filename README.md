@@ -39,6 +39,8 @@ helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-o
 
 See `values.yaml` for configuration options.
 
+`ciliumNetworkPolicy.enabled=true` renders a policy that allows the observer egress to Hubble Relay on the relay pod's listen port (`ciliumNetworkPolicy.relayPort`, default `4245` — Cilium enforces egress policy on the backend pod's port, not the Service port) and, by default, to the cluster DNS (`ciliumNetworkPolicy.dns`, needed because the relay is reached by name); point `dns.namespace` / `dns.matchLabels` at your DNS pods if they are not `kube-system` / `k8s-app=kube-dns`.
+
 CF2CNP can be exposed via `cf2cnp.ingress` or, with the Gateway API, via `cf2cnp.httpRoute`. The URL the Grafana dashboard uses is taken from the first ingress host or httpRoute hostname.
 
 ## TLS and mTLS to Hubble Relay

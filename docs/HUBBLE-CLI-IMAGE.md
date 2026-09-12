@@ -44,28 +44,47 @@ to the container's PID 1 stdout, which the kubelet writes to `/var/log/pods/<ns>
 — the file a log shipper tails into Loki. A distroless CLI image would need the command changed, not
 only the tag.
 
-## Versions: 1.16.4 CLI, 1.20.1 relay — and why the image is not bumped
+## Versions: the default image is unmaintained — run the CLI from the Cilium agent image instead
 
-- `quay.io/cilium/hubble` has **no release tag after `v1.16.4`** (checked `v1.17.0` … `v1.20.1`: absent;
-  `latest` is a stale `v0.9.0-dev` build from 2021 — never use it). The Hubble CLI project publishes
-  tarballs only since then. The chart's default is the newest published CLI image.
-- The CLI works against a 1.20.1 relay because the Observer API is stable; it prints one version
-  warning at connect time. **Measured: the JSON is identical.** The same DROPPED flows serialized by
-  the 1.16.4 CLI (via the relay) and by the 1.20.1 CLI (the one inside the Cilium agent image) carry
-  the **same 49 fields** — including `egress_denied_by` with the policy name, revision and kind.
-  Nothing is lost with 1.16.4.
-- The only newer CLI ships **inside the Cilium agent image** (`quay.io/cilium/cilium:v1.20.1`:
-  `hubble v1.20.1`, `/bin/sh → /usr/bin/dash`, all 14 flags the chart uses present). It can be set as
-  `image.repository`/`image.tag`, at the cost of a several-hundred-MB image for a one-binary job.
-- What the 1.20.1 CLI adds for `observe`, and what it would mean here:
+The facts about `quay.io/cilium/hubble` (checked 2026-09-12):
 
-  | flag (1.20.1 only) | value for the observer |
-  |---|---|
-  | `--from-cluster` / `--to-cluster` | server-side cluster filters — a per-cluster observer in a mesh without a mesh-wide relay |
-  | `--field-mask`, `--use-default-field-masks` | ask the relay for fewer fields per flow — smaller lines, less Loki volume |
-  | `--print-policy-names` | compact output only; the JSON already carries `*_denied_by` |
-  | `--encrypted` / `--unencrypted`, `--reply` / `--not-reply`, `--ip-trace-id` | more server-side filters |
-  | `--kube-context`, `--port-forward-port` | CLI-side port-forwarding — not for a pod |
+- **No release tag after `v1.16.4`**, pushed 2024-11-21 (`v1.17.0` … `v1.20.1`: absent; `latest` is a
+  stale `v0.9.0-dev` build from 2021 — never use it). The Hubble CLI project publishes tarballs only
+  since; there is no newer image to move to in that registry.
+- Built with **Go 1.23.3** (end of life) on **alpine 3.20.3**. `trivy image --severity CRITICAL,HIGH`:
+  **5 CRITICAL + 51 HIGH** (OS layer 2/19, the `hubble` binary 3/32). Unmaintained means those numbers
+  only grow.
+- The CLI works against a 1.20.1 relay because the Observer API is stable (7/7 nodes, one version
+  warning at connect time), and the JSON it prints is identical to the newer CLI's — the same 49
+  fields on the same flows, `egress_denied_by` included. Nothing is lost *today*; nothing is fixed *ever*.
+
+The Hubble CLI that **is** maintained ships inside the Cilium agent image, on the same release train as
+the relay it talks to. Measured on `quay.io/cilium/cilium:v1.20.1`: `hubble v1.20.1` (Go 1.26.5),
+`/bin/sh → /usr/bin/dash` (the `> /proc/1/fd/1` redirect still works), all 14 flags the chart uses
+present, trivy **0 CRITICAL** (128 HIGH across its 14 Go binaries; the `hubble` binary itself 0/11).
+It is already on every node — it *is* the agent's image — so pinning the observer to the agents'
+digest costs no pull:
+
+```yaml
+image:
+  repository: quay.io/cilium/cilium
+  tag: "v1.20.1@sha256:<the digest your cilium DaemonSet runs>"
+```
+
+Live with that (Hubble Observer on Cilium 1.20.1, relay on mTLS): pod Ready, `Connected Nodes: 7/7`,
+no version warning, 68 of 68 DROPPED flows on stdout and in Loki. The trade: a ~600 MB image for a
+one-binary job (already present), and the observer's version now moves with the cluster's Cilium —
+which is the point: one release train, one security process, one digest to review.
+
+What the 1.20.1 CLI adds for `observe`, and what it would mean here:
+
+| flag (1.20.1 only) | value for the observer |
+|---|---|
+| `--from-cluster` / `--to-cluster` | server-side cluster filters — a per-cluster observer in a mesh without a mesh-wide relay |
+| `--field-mask`, `--use-default-field-masks` | ask the relay for fewer fields per flow — smaller lines, less Loki volume |
+| `--print-policy-names` | compact output only; the JSON already carries `*_denied_by` |
+| `--encrypted` / `--unencrypted`, `--reply` / `--not-reply`, `--ip-trace-id` | more server-side filters |
+| `--kube-context`, `--port-forward-port` | CLI-side port-forwarding — not for a pod |
 
 ## What the dashboard does not yet show, though the data is there
 

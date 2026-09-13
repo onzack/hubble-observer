@@ -1,0 +1,9 @@
+dependencies:
+- name: cf2cnp
+  repository: oci://ghcr.io/onzack/helm-charts
+  version: 0.4.0
+- name: hubble-policy-verdicts
+  repository: https://ephico2real2.github.io/hubble-policy-verdicts
+  version: 0.2.2
+digest: sha256:bb9008600c4bf6848eb07bd9b5c896e694c6e967d06e7470981c53a0190eff43
+generated: "2026-09-13T09:45:21.822614-05:00"

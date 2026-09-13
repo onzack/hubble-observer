@@ -5,6 +5,11 @@
 # Measured on a Cilium 1.20.1 worker: 5.6 % of all events (3.3/s of 59/s) — the stream is cheap where "all flows"
 # is not. In Loki: `{container="hubble-observer-verdicts"} | json allowed_by="flow.ingress_allowed_by[0].name"`.
 fullnameOverride: hubble-observer-verdicts
+containerName: hubble-observer-verdicts   # its own `container` label in Loki (measured: with the chart's default both releases shared {container="hubble-observer"})
+image:                                    # the Hubble CLI inside the Cilium agent image: --field-mask exists there (1.20.1);
+  repository: quay.io/cilium/cilium       # the chart's default quay.io/cilium/hubble:v1.16.4 has no such flag and the pod
+  tag: "v1.20.1"                          # would crash-loop (review finding; measured in the PoC's demo 25 Part 7b)
+  pullPolicy: IfNotPresent
 verdictFilter: none                       # every verdict …
 extraArgs: ["--type", "policy-verdict"]   # … but only policy-verdict events (the agent's PolicyVerdictNotify)
 fieldMask:                                # what a "which policy decided" panel needs, nothing more
@@ -21,6 +26,17 @@ fieldMask:                                # what a "which policy decided" panel 
   - egress_denied_by
   - event_type
   - node_name
+# The relay: the SAME settings as your first release (review finding — the chart's defaults are port 80 without
+# TLS, which a relay that requires mutual TLS refuses). Shown here as the enterprise setup the fork's docs describe:
+hubbleRelay:
+  serviceName: hubble-relay
+  namespace: kube-system
+  port: "443"
+  tls:
+    enabled: true
+    serverName: hubble.hubble-relay.cilium.io
+    ca: {secretName: hubble-observer-relay-certs}                     # the relay's CA (cert-manager wrote it)
+    client: {enabled: true, secretName: hubble-observer-relay-certs}  # this pod's own client certificate
 cf2cnp:
   enabled: false                          # one cf2cnp per cluster is enough (the first release's)
 grafanaDashboard:

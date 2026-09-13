@@ -1,4 +1,9 @@
 fullnameOverride: hubble-observer
+# The container's name (default: the chart's, "hubble-observer"). Log shippers turn it into the `container` label the
+# dashboard's LogQL selects on, so a SECOND release of this chart (examples/values-policy-verdicts.yaml) sets its own
+# name to keep its stream apart from the first release's — with the default both releases would share
+# {container="hubble-observer"} and every dashboard query would read both.
+containerName: ""
 
 replicaCount: 1 # Currently only 1 replica is supported
 

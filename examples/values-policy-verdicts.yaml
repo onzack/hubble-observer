@@ -1,0 +1,29 @@
+# A SECOND release of this chart, beside the DROPPED-flow observer: the policy-verdict events (E8).
+#   helm install hubble-observer-verdicts <chart> -n hubble-observer -f examples/values-policy-verdicts.yaml
+# Hubble's policy-verdict events are every verdict (allowed and denied) with the policy that decided:
+# ingress_allowed_by / egress_allowed_by / ingress_denied_by / egress_denied_by carry the policy's name and kind.
+# Measured on a Cilium 1.20.1 worker: 5.6 % of all events (3.3/s of 59/s) — the stream is cheap where "all flows"
+# is not. In Loki: `{container="hubble-observer-verdicts"} | json allowed_by="flow.ingress_allowed_by[0].name"`.
+fullnameOverride: hubble-observer-verdicts
+verdictFilter: none                       # every verdict …
+extraArgs: ["--type", "policy-verdict"]   # … but only policy-verdict events (the agent's PolicyVerdictNotify)
+fieldMask:                                # what a "which policy decided" panel needs, nothing more
+  - time
+  - uuid
+  - verdict
+  - traffic_direction
+  - source
+  - destination
+  - l4
+  - ingress_allowed_by
+  - egress_allowed_by
+  - ingress_denied_by
+  - egress_denied_by
+  - event_type
+  - node_name
+cf2cnp:
+  enabled: false                          # one cf2cnp per cluster is enough (the first release's)
+grafanaDashboard:
+  enabled: false                          # the first release ships the dashboard
+ciliumNetworkPolicy:
+  enabled: true                           # this pod talks to the relay and to DNS only

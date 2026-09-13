@@ -96,3 +96,24 @@ policyVerdictsDashboard:
 ```
 
 The panels need the `policy` metric enabled on the agents with source/destination contexts (see that chart's README).
+## A second observer for policy-verdict events
+
+The default observer streams DROPPED flows. Hubble also emits a **policy-verdict** event for every verdict a
+policy decides — allowed and denied — carrying the policy's name and kind (`ingress_allowed_by`,
+`egress_allowed_by`, `ingress_denied_by`, `egress_denied_by`). They are a small share of all events (measured
+on Cilium 1.20.1: 5.6 %), so a second release of this chart with `--type policy-verdict` is a cheap way to
+answer "which policy allowed this?" in Loki:
+
+```bash
+helm install hubble-observer-verdicts oci://ghcr.io/onzack/helm-charts/hubble-observer -n hubble-observer \
+  -f examples/values-policy-verdicts.yaml
+```
+
+Then, in Grafana on the Loki datasource:
+
+```logql
+sum by (allowed_by) (count_over_time({container="hubble-observer-verdicts"} | json allowed_by="flow.ingress_allowed_by[0].name" | allowed_by != "" [$__range]))
+```
+
+Point your collector at the new pod's log the same way it tails the first (`examples/` and the walkthrough in
+https://github.com/ephico2real2/cilium-implementation-poc/tree/main/demos/25-hubble-observer-loki).

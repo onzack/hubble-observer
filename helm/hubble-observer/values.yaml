@@ -157,3 +157,8 @@ cf2cnp:
         pathType: PathPrefix
 
   extraManifests: []
+
+# Optional companion dashboard: Hubble / Policy Verdicts (Namespace). Values pass through to the subchart
+# (dashboard.folder, sidecar.*, grafanaOperator.*); see https://github.com/ephico2real2/hubble-policy-verdicts
+policyVerdictsDashboard:
+  enabled: false

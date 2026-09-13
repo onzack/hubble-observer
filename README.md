@@ -81,3 +81,18 @@ The CA can also come from a ConfigMap, for example a cluster wide CA bundle, via
 - The hubble CLI does not reload certificates while running, so the pod has to be restarted after certificate rotation.
 - The certificates are mounted with mode `0400`. When running the container as a non-root user, set `podSecurityContext.fsGroup` so the files stay readable.
 - `hubbleRelay.tls.insecureSkipVerify=true` disables verification of the relay certificate. It is only meant for debugging.
+
+## Optional: the Policy Verdicts dashboard
+
+cf2cnp turns flows into CiliumNetworkPolicies; the [hubble-policy-verdicts](https://github.com/ephico2real2/hubble-policy-verdicts)
+dashboard shows what those policies then do — audited (policy evaluated, not enforced), forwarded (an allow rule
+matched), dropped (enforced) — per namespace and per source → destination, from Hubble's `policy` metric. It is a
+dependency of this chart, off by default:
+
+```yaml
+policyVerdictsDashboard:
+  enabled: true
+  dashboard: {folder: Cilium}
+```
+
+The panels need the `policy` metric enabled on the agents with source/destination contexts (see that chart's README).

@@ -86,10 +86,27 @@ What the 1.20.1 CLI adds for `observe`, and what it would mean here:
 | `--encrypted` / `--unencrypted`, `--reply` / `--not-reply`, `--ip-trace-id` | more server-side filters |
 | `--kube-context`, `--port-forward-port` | CLI-side port-forwarding — not for a pod |
 
-## What the dashboard does not yet show, though the data is there
+## Two fields the dashboard now shows — and the two empty cases
 
-Two fields present in every dropped flow's JSON are not on the shipped dashboard: `drop_reason_desc`
-(`POLICY_DENIED`, `POLICY_DENY`, …) and `egress_denied_by[].name` / `ingress_denied_by[].name` (which
-policy dropped it — filled when Cilium's `hubble-network-policy-correlation-enabled` is on, the default
-since 1.16). Both are one `sum by (…) (count_over_time(… | json …))` away; see the panels added in the
-`cilium-kind-poc` demo 25 for a working example.
+`drop_reason_desc` (`POLICY_DENIED`, `POLICY_DENY`, …) and `egress_denied_by[].name` /
+`ingress_denied_by[].name` (which policy dropped it — filled when Cilium's
+`hubble-network-policy-correlation-enabled` is on, the default since 1.16) are on the dashboard as two pie
+panels under Statistics, *Flows per Drop Reason* and *Flows per Denying Policy* — one
+`sum by (…) (count_over_time(… | $logparser …))` each, on the same variables as the other panels. The policy
+name is read by JSON path (`flow.egress_denied_by[0].name`, `flow.ingress_denied_by[0].name`) because Loki's
+`json` parser flattens nested objects and skips arrays.
+
+They are not on every dropped line, and the panels say so instead of hiding it. Both count only flows whose
+verdict is `DROPPED` (the stream carries every verdict when `verdictFilter` is `none`). A flow the L7 proxy
+denies is `verdict: DROPPED` with `drop_reason_desc` omitted — Hubble's L7 parser writes the enum's zero value
+(`DROP_REASON_UNKNOWN`, `pkg/hubble/parser/seven/parser.go`) and `protojson` leaves a zero enum out — so the
+drop-reason panel names it from the L7 record (`L7 denied by the proxy (REQUEST)`). The policy panel counts only
+`POLICY_DENIED` and `POLICY_DENY` drops: a name when correlation supplied one; `explicit deny (policy name
+unavailable)` for a `POLICY_DENY` without one; `default deny (no matching allow)` for a `POLICY_DENIED` without one
+— on a default-deny namespace that last bucket is most drops, and hiding it would make the pie disagree with the
+totals above it.
+
+Measured on Cilium 1.20.1: `POLICY_DENIED 274 / POLICY_DENY 40`, and `bank-cell-baseline 20` as a named denying
+policy; the queries were also run through Loki 3.7.7's own engine on synthetic flows of each kind (the test lives
+beside the reference lab's demo 25). A capture of both panels with data is in the reference lab's CI captures
+(`grafana-hubble-observer-flows.png`), one run's evidence at a time.

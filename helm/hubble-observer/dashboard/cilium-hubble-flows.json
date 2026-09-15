@@ -736,16 +736,16 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "sum by(flow_drop_reason_desc) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\"\n    [$__range])\n)",
+          "expr": "sum by(drop_reason) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\"\n        | label_format drop_reason=\"{{ if .flow_drop_reason_desc }}{{ .flow_drop_reason_desc }}{{ else if .flow_l7_type }}L7 denied by the proxy ({{ .flow_l7_type }}){{ else }}DROP_REASON_UNKNOWN{{ end }}\"\n    [$__range])\n)",
           "hide": false,
-          "legendFormat": "{{flow_drop_reason_desc}}",
+          "legendFormat": "{{drop_reason}}",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "title": "Flows per Drop Reason",
       "type": "piechart",
-      "description": "Cilium drop reason of each DROPPED flow (flow.drop_reason_desc): POLICY_DENIED = no rule allowed it, POLICY_DENY = an explicit deny rule."
+      "description": "Cilium's drop reason of each DROPPED flow (flow.drop_reason_desc): POLICY_DENIED = no rule allowed it, POLICY_DENY = an explicit deny rule, SERVICE_BACKEND_NOT_FOUND, … A flow denied by the L7 proxy carries no drop_reason_desc in its JSON (the enum's zero value, DROP_REASON_UNKNOWN, is omitted), so it is named here by its L7 record instead of appearing as an empty label."
     },
     {
       "datasource": {
@@ -898,7 +898,7 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "sum by(denied_by) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\" | json denied_by=\"flow.egress_denied_by[0].name\" | denied_by!=\"\"\n    [$__range])\n)",
+          "expr": "sum by(denied_by) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\" | json egress_denied=\"flow.egress_denied_by[0].name\", ingress_denied=\"flow.ingress_denied_by[0].name\"\n        | label_format denied_by=\"{{ if .egress_denied }}{{ .egress_denied }}{{ else if .ingress_denied }}{{ .ingress_denied }}{{ else }}default deny (no rule matched){{ end }}\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "{{denied_by}}",
           "queryType": "range",
@@ -907,7 +907,7 @@
       ],
       "title": "Flows per Denying Policy",
       "type": "piechart",
-      "description": "The policy that denied the flow (flow.egress_denied_by[0].name), filled by Cilium's policy correlation for explicit deny rules; Loki's json parser skips arrays, so the element is extracted by JSON path."
+      "description": "Which policy denied the flow, as Cilium's policy correlation names it (flow.egress_denied_by[0].name or flow.ingress_denied_by[0].name — Loki's json parser skips arrays, so the element is extracted by JSON path). Only an explicit deny rule has a name; a drop because no rule allowed the flow is the default deny and is shown as such."
     },
     {
       "datasource": {
@@ -915,7 +915,7 @@
         "type": "loki",
         "uid": "${datasource}"
       },
-      "description": "Flows per Verdict (per $__interval)",
+      "description": "One bar per interval ($__auto, at least 30s): how many flows the observer received in it, split by verdict — DROPPED only with the chart's default verdictFilter, every verdict when it is none. The same filters as the panels above (namespaces, direction, IP version, clusters, the regexes). A burst of red is a burst of drops; the History table below lists them.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -927,7 +927,7 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisGridShow": false,
-            "axisLabel": "",
+            "axisLabel": "flows per interval",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -1066,7 +1066,7 @@
         ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 6,
         "w": 24,
         "x": 0,
         "y": 15
@@ -1078,7 +1078,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1102,7 +1102,8 @@
           "refId": "A"
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "title": "Flows over time, by verdict"
     },
     {
       "collapsed": false,
@@ -1110,7 +1111,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 21
       },
       "id": 4,
       "panels": [],
@@ -1415,7 +1416,7 @@
         "h": 15,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 22
       },
       "id": 1,
       "options": {
@@ -1584,7 +1585,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 37
       },
       "id": 13,
       "panels": [
@@ -2020,7 +2021,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 38
       },
       "id": 12,
       "panels": [

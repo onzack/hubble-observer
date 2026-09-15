@@ -21,8 +21,27 @@ spec:
             {{- end }}
       toPorts:
         - ports:
-            - port: {{ include "hubble-observer.relayPort" . | quote }}
+            # Cilium enforces egress L4 policy on the backend POD's port after service translation, so this must be the
+            # relay container's listen port (Cilium's hubble.relay.listenPort, 4245), not the Service port (80/443).
+            - port: {{ .Values.ciliumNetworkPolicy.relayPort | quote }}
               protocol: TCP
+    {{- if .Values.ciliumNetworkPolicy.dns.enabled }}
+    # The observer reaches the relay by NAME (args and probes): a pod selected by an egress policy must be
+    # allowed to reach the cluster DNS, or it never resolves the relay and never becomes Ready.
+    - toEndpoints:
+        - matchLabels:
+            {{- toYaml .Values.ciliumNetworkPolicy.dns.matchLabels | nindent 12 }}
+            {{- if .Values.ciliumNetworkPolicy.dns.namespace }}
+            io.kubernetes.pod.namespace: {{ .Values.ciliumNetworkPolicy.dns.namespace }}
+            {{- end }}
+      toPorts:
+        - ports:
+            - port: {{ .Values.ciliumNetworkPolicy.dns.port | quote }}
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    {{- end }}
 {{- if .Values.cf2cnp.enabled }}
 ---
 # CiliumNetworkPolicy: Allow hubble-observer egress to cf2cnp

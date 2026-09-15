@@ -35,11 +35,16 @@ Before installing the Hubble Observer, ensure you have the following components 
 helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-observer --version <VERSION>
 ```
 
+## How the image and its flags work
+
+[`docs/HUBBLE-CLI-IMAGE.md`](docs/HUBBLE-CLI-IMAGE.md) — what `quay.io/cilium/hubble` contains, the five CLI capabilities the observer relies on, why the shell is load-bearing, and the measured comparison of the 1.16.4 CLI with the 1.20.1 one (same JSON, same 49 fields).
+
 ## Configuration
 
 See `values.yaml` for configuration options.
 
 `fieldMask` keeps only the listed flow fields (`hubble observe --field-mask`): Hubble Relay strips the rest before sending, so the stream, the pod log and Loki all shrink — `values.yaml` carries the smallest mask that still feeds every dashboard panel (~35% fewer bytes per flow, measured). `extraArgs` appends further `hubble observe` flags verbatim.
+`ciliumNetworkPolicy.enabled=true` renders a policy that allows the observer egress to Hubble Relay on the relay pod's listen port (`ciliumNetworkPolicy.relayPort`, default `4245` — Cilium enforces egress policy on the backend pod's port, not the Service port) and, by default, to the cluster DNS (`ciliumNetworkPolicy.dns`, needed because the relay is reached by name); point `dns.namespace` / `dns.matchLabels` at your DNS pods if they are not `kube-system` / `k8s-app=kube-dns`.
 
 CF2CNP can be exposed via `cf2cnp.ingress` or, with the Gateway API, via `cf2cnp.httpRoute`. The URL the Grafana dashboard uses is taken from the first ingress host or httpRoute hostname.
 

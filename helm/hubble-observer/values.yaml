@@ -136,6 +136,17 @@ grafanaDashboard:
 # CiliumNetworkPolicy configuration
 ciliumNetworkPolicy:
   enabled: false
+  # The relay container's listen port (Cilium's hubble.relay.listenPort, default 4245). Cilium enforces egress L4 policy
+  # on the backend pod's port after service translation, so the rule must name this port, not the Service's 80/443.
+  relayPort: "4245"
+  # Egress to the cluster DNS. The observer connects to the relay by name, so without this rule a pod selected by
+  # the policy cannot resolve hubble-relay.<namespace>.svc.<clusterDomain> and never becomes Ready.
+  dns:
+    enabled: true
+    namespace: kube-system
+    matchLabels:
+      k8s-app: kube-dns
+    port: "53"
   cf2cnp:
     # Port for cf2cnp service
     port: "8080"

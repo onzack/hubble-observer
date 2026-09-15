@@ -606,98 +606,7 @@
           },
           "mappings": []
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/AUDIT.*/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "orange",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/(DROPPED|ERROR)/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/FORWARDED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/REDIRECTED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/TRACED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/TRANSLATED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -736,7 +645,7 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "sum by(drop_reason) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\"\n        | label_format drop_reason=\"{{ if .flow_drop_reason_desc }}{{ .flow_drop_reason_desc }}{{ else if .flow_l7_type }}L7 denied by the proxy ({{ .flow_l7_type }}){{ else }}DROP_REASON_UNKNOWN{{ end }}\"\n    [$__range])\n)",
+          "expr": "sum by(drop_reason) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_verdict=\"DROPPED\" | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\"\n        | label_format drop_reason=\"{{ if .flow_drop_reason_desc }}{{ .flow_drop_reason_desc }}{{ else if .flow_l7_type }}L7 denied by the proxy ({{ .flow_l7_type }}){{ else }}DROP_REASON_UNKNOWN{{ end }}\"\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "{{drop_reason}}",
           "queryType": "range",
@@ -745,7 +654,7 @@
       ],
       "title": "Flows per Drop Reason",
       "type": "piechart",
-      "description": "Cilium's drop reason of each DROPPED flow (flow.drop_reason_desc): POLICY_DENIED = no rule allowed it, POLICY_DENY = an explicit deny rule, SERVICE_BACKEND_NOT_FOUND, … A flow denied by the L7 proxy carries no drop_reason_desc in its JSON (the enum's zero value, DROP_REASON_UNKNOWN, is omitted), so it is named here by its L7 record instead of appearing as an empty label."
+      "description": "Cilium's drop reason of each DROPPED flow (flow.drop_reason_desc): POLICY_DENIED = no rule allowed it, POLICY_DENY = an explicit deny rule, SERVICE_BACKEND_NOT_FOUND, … Only flows whose verdict is DROPPED count (the stream carries every verdict when verdictFilter is none). A flow denied by the L7 proxy carries no drop_reason_desc in its JSON (the enum's zero value, DROP_REASON_UNKNOWN, is omitted), so it is named here from its L7 record instead of appearing as an empty label."
     },
     {
       "datasource": {
@@ -768,98 +677,7 @@
           },
           "mappings": []
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/AUDIT.*/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "orange",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/(DROPPED|ERROR)/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/FORWARDED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "green",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/REDIRECTED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/TRACED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "blue",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/TRANSLATED/"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 7,
@@ -898,16 +716,16 @@
           },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "sum by(denied_by) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\" | json egress_denied=\"flow.egress_denied_by[0].name\", ingress_denied=\"flow.ingress_denied_by[0].name\"\n        | label_format denied_by=\"{{ if .egress_denied }}{{ .egress_denied }}{{ else if .ingress_denied }}{{ .ingress_denied }}{{ else }}default deny (no rule matched){{ end }}\"\n    [$__range])\n)",
+          "expr": "sum by(denied_by) (\n    count_over_time(\n        {namespace=\"$hubbleobservernamespace\",container=\"hubble-observer\"} |~ `(?i)$searchregex` !~ `(?i)$excluderegex`\n        | $logparser | flow_verdict=\"DROPPED\" | flow_drop_reason_desc=~\"^POLICY_DEN(Y|IED)$\" | flow_source_namespace=~\"$sourcenamespace\" | flow_destination_namespace=~\"$destinationnamespace\" | flow_traffic_direction=~\"$direction\" | flow_IP_ipVersion=~\"$ipversion\" | flow_source_cluster_name=~\"$sourcecluster\" | flow_destination_cluster_name=~\"$destinationcluster\" | json egress_denied=\"flow.egress_denied_by[0].name\", ingress_denied=\"flow.ingress_denied_by[0].name\"\n        | label_format denied_by=`{{ if .egress_denied }}{{ .egress_denied }}{{ else if .ingress_denied }}{{ .ingress_denied }}{{ else if eq .flow_drop_reason_desc \"POLICY_DENY\" }}explicit deny (policy name unavailable){{ else }}default deny (no matching allow){{ end }}`\n    [$__range])\n)",
           "hide": false,
           "legendFormat": "{{denied_by}}",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "Flows per Denying Policy",
+      "title": "Policy drops by denying policy",
       "type": "piechart",
-      "description": "Which policy denied the flow, as Cilium's policy correlation names it (flow.egress_denied_by[0].name or flow.ingress_denied_by[0].name — Loki's json parser skips arrays, so the element is extracted by JSON path). Only an explicit deny rule has a name; a drop because no rule allowed the flow is the default deny and is shown as such."
+      "description": "Only DROPPED flows whose reason is POLICY_DENIED or POLICY_DENY, by the policy Cilium's correlation names (flow.egress_denied_by[0].name or flow.ingress_denied_by[0].name — Loki's json parser skips arrays, so the element is read by JSON path). A POLICY_DENY with no name is an explicit deny whose name correlation did not supply; a POLICY_DENIED with no name is the default deny — no rule allowed the flow."
     },
     {
       "datasource": {
@@ -1808,7 +1626,7 @@
             "h": 15,
             "w": 24,
             "x": 0,
-            "y": 29
+            "y": 38
           },
           "id": 14,
           "options": {
@@ -2040,7 +1858,7 @@
             "h": 28,
             "w": 24,
             "x": 0,
-            "y": 30
+            "y": 39
           },
           "id": 3,
           "options": {

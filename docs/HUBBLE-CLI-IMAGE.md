@@ -86,10 +86,14 @@ What the 1.20.1 CLI adds for `observe`, and what it would mean here:
 | `--encrypted` / `--unencrypted`, `--reply` / `--not-reply`, `--ip-trace-id` | more server-side filters |
 | `--kube-context`, `--port-forward-port` | CLI-side port-forwarding — not for a pod |
 
-## What the dashboard does not yet show, though the data is there
+## Two fields every dropped flow carries, now on the dashboard
 
-Two fields present in every dropped flow's JSON are not on the shipped dashboard: `drop_reason_desc`
-(`POLICY_DENIED`, `POLICY_DENY`, …) and `egress_denied_by[].name` / `ingress_denied_by[].name` (which
-policy dropped it — filled when Cilium's `hubble-network-policy-correlation-enabled` is on, the default
-since 1.16). Both are one `sum by (…) (count_over_time(… | json …))` away; see the panels added in the
-`cilium-kind-poc` demo 25 for a working example.
+`drop_reason_desc` (`POLICY_DENIED`, `POLICY_DENY`, …) and `egress_denied_by[].name` /
+`ingress_denied_by[].name` (which policy dropped it — filled when Cilium's
+`hubble-network-policy-correlation-enabled` is on, the default since 1.16) are in every dropped flow's JSON.
+The dashboard shows them as two pie panels under the Statistics row, *Flows per Drop Reason* and *Flows per
+Denying Policy* — one `sum by (…) (count_over_time(… | $logparser …))` each, on the same variables as the other
+panels; the policy name is read by JSON path (`flow.egress_denied_by[0].name`) because Loki's `json` parser skips
+arrays. Measured on Cilium 1.20.1: `POLICY_DENIED 274 / POLICY_DENY 40`, and `bank-cell-baseline 20` as the
+denying policy; on the reference lab's CI runs both panels render with data on every run
+(`grafana-hubble-observer-flows.png` in the run's captures).

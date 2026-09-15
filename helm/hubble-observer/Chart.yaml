@@ -2,7 +2,7 @@ apiVersion: v2
 name: hubble-observer
 description: A Helm chart for Hubble Observer - A small observability component that monitors network flows within Cilium.
 type: application
-version: 2.6.0-alpha
+version: 2.7.0-alpha
 appVersion: "1.16.4"
 keywords:
   - networking
@@ -22,3 +22,11 @@ dependencies:
     version: "*"
     repository: oci://ghcr.io/onzack/helm-charts
     condition: cf2cnp.enabled
+  # Optional companion dashboard: Hubble / Policy Verdicts (Namespace) — audited / forwarded / dropped per namespace from
+  # Hubble's `policy` metric, the "observe first, then enforce" picture for the policies generated from these flows.
+  # Off by default; needs the policy metric enabled on the agents: https://github.com/ephico2real2/hubble-policy-verdicts
+  - name: hubble-policy-verdicts
+    alias: policyVerdictsDashboard
+    version: "0.4.0"
+    repository: https://ephico2real2.github.io/hubble-policy-verdicts
+    condition: policyVerdictsDashboard.enabled

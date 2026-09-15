@@ -35,6 +35,10 @@ Before installing the Hubble Observer, ensure you have the following components 
 helm upgrade --install hubble-observer oci://ghcr.io/onzack/helm-charts/hubble-observer --version <VERSION>
 ```
 
+## How the image and its flags work
+
+[`docs/HUBBLE-CLI-IMAGE.md`](docs/HUBBLE-CLI-IMAGE.md) — what `quay.io/cilium/hubble` contains, the five CLI capabilities the observer relies on, why the shell is load-bearing, and the measured comparison of the 1.16.4 CLI with the 1.20.1 one (same JSON, same 49 fields).
+
 ## Configuration
 
 See `values.yaml` for configuration options.

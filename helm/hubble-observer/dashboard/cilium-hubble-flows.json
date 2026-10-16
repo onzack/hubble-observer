@@ -346,7 +346,24 @@
         }
       ],
       "title": "Flows per Verdict",
-      "type": "piechart"
+      "type": "piechart",
+      "transformations": [
+        {
+          "id": "rowsToFields",
+          "options": {
+            "mappings": [
+              {
+                "fieldName": "flow_verdict",
+                "handlerKey": "field.name"
+              },
+              {
+                "fieldName": "Time",
+                "handlerKey": "__ignore"
+              }
+            ]
+          }
+        }
+      ]
     },
     {
       "datasource": {
